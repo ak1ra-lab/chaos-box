@@ -1,11 +1,21 @@
 [project]
 name = "miscbox"
 dynamic = ["version"]
-description = "Collection of handy utils written by Python 3"
+description = "Collection of handy utils written in Python 3"
 authors = [
     {name = "ak1ra", email = "git@ak1ra.xyz"},
 ]
-dependencies = []
+dependencies = [
+    "argcomplete>=3.6.2",
+    "httpx>=0.28.1",
+    "mobi>=0.3.3",
+    "netaddr>=1.3.0",
+    "psutil>=7.0.0",
+    "py7zr>=1.0.0",
+    "opencv-python-headless>=4.11.0.86",
+    "numpy>=2.3.0",
+    "Pillow>=11.2.1",
+]
 requires-python = ">=3.11"
 classifiers = [
     "Environment :: Console",
@@ -14,6 +24,7 @@ keywords = []
 readme = "README.md"
 license = {text = "MIT"}
 
+
 [project.urls]
 Repository = "https://github.com/ak1ra-lab/miscbox"
 Issues = "https://github.com/ak1ra-lab/miscbox/issues"
@@ -21,14 +32,26 @@ Changelog = "https://github.com/ak1ra-lab/miscbox/blob/master/CHANGELOG.md"
 
 
 [project.scripts]
-miscbox = "miscbox.main:main"
+deb-extract = "miscbox.deb_extract:main"
+dir-archive = "miscbox.dir_archive:main"
+enc-recover = "miscbox.enc_recover:main"
 
+punc-conv = "miscbox.punc_conv:main"
+sort-keys = "miscbox.sort_keys:main"
+urlencode = "miscbox.urlencode:main"
 
-# All development dependencies are included as long as --prod is not passed and -G doesn't specify any dev groups.
+mobi-archive = "miscbox.mobi_archive:main"
+
+net-stats = "miscbox.net_stats:main"
+merge-ip-ranges = "miscbox.merge_ip_ranges:main"
+
+rotate-images = "miscbox.rotate_images:main"
+
 
 [build-system]
 requires = ["pdm-backend"]
 build-backend = "pdm.backend"
+
 
 [tool.pdm]
 distribution = true
@@ -36,7 +59,6 @@ distribution = true
 
 [tool.pdm.version]
 source = "scm"
-
 
 
 [dependency-groups]
