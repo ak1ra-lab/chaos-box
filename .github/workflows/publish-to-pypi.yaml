@@ -20,10 +20,16 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - uses: pdm-project/setup-pdm@v4
         with:
           python-version: 3.11
 
+      - name: Build a binary wheel and a source tarball
+        run: pdm build -v
+
       - name: Publish package distributions to PyPI
-        run: pdm publish -v
+        uses: pypa/gh-action-pypi-publish@release/v1

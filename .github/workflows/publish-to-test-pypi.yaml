@@ -25,10 +25,23 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - uses: pdm-project/setup-pdm@v4
         with:
           python-version: 3.11
 
-      - name: Publish package distributions to PyPI
-        run: pdm publish -v --repository testpypi
+      - name: Build a binary wheel and a source tarball
+        run: |-
+          git tag $(git describe --tags | cut -d- -f1,2)
+          pdm build -v
+
+      - name: Publish package distributions to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          verbose: true
+          print-hash: true
+          skip-existing: true
+          repository-url: https://test.pypi.org/legacy/
