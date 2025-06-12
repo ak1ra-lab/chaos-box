@@ -3,7 +3,6 @@ on:
     branches:
       - master
   pull_request:
-  workflow_dispatch: ~
 
 jobs:
   tests:
@@ -13,5 +12,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - uses: pdm-project/setup-pdm@v4
+
+      - run: pdm install
 
       - run: pdm run nox
