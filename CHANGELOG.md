@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2025-06-12
+
+### 🚀 Features
+
+- implement rename_with_date.py
+- implement shasum_list.py
+
+### 📚 Documentation
+
+- implement README.md
+
+### ⚙️ Miscellaneous Tasks
+
+- set console log to brief format
+- update pyproject.toml
+- rename tests.yaml to nox.yaml
+- use pypa/gh-action-pypi-publish
+- add missing MIT LICENSE
+- bump version
+
 ## [0.1.0] - 2025-06-12
 
 ### 🚀 Features
