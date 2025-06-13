@@ -5,7 +5,7 @@
 groups = ["default", "dev", "lint", "tests"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:3e710d24899acbe588e7d2fea269c86f114961ac0d89f8a3bb3960c11d470fb2"
+content_hash = "sha256:c76d1e775f5882478ecf9800bf13d8cabb06455ce70fbcc27dfa40d0613ccd2f"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
@@ -658,6 +658,17 @@ files = [
 ]
 
 [[package]]
+name = "pathspec"
+version = "0.12.1"
+requires_python = ">=3.8"
+summary = "Utility library for gitignore style pattern matching of file paths."
+groups = ["default"]
+files = [
+    {file = "pathspec-0.12.1-py3-none-any.whl", hash = "sha256:a0d503e138a4c123b27490a4f7beda6a01c6f288df0e4a8b79c7eb0dc7b4cc08"},
+    {file = "pathspec-0.12.1.tar.gz", hash = "sha256:a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712"},
+]
+
+[[package]]
 name = "pillow"
 version = "11.2.1"
 requires_python = ">=3.9"
@@ -954,17 +965,18 @@ files = [
 
 [[package]]
 name = "pytest-cov"
-version = "6.1.1"
+version = "6.2.1"
 requires_python = ">=3.9"
 summary = "Pytest plugin for measuring coverage."
 groups = ["dev", "tests"]
 dependencies = [
     "coverage[toml]>=7.5",
-    "pytest>=4.6",
+    "pluggy>=1.2",
+    "pytest>=6.2.5",
 ]
 files = [
-    {file = "pytest_cov-6.1.1-py3-none-any.whl", hash = "sha256:bddf29ed2d0ab6f4df17b4c55b0a657287db8684af9c42ea546b21b1041b3dde"},
-    {file = "pytest_cov-6.1.1.tar.gz", hash = "sha256:46935f7aaefba760e716c2ebfbe1c216240b9592966e7da99ea8292d4d3e2a0a"},
+    {file = "pytest_cov-6.2.1-py3-none-any.whl", hash = "sha256:f5bc4c23f42f1cdd23c70b1dab1bbaef4fc505ba950d53e0081d0730dd7e86d5"},
+    {file = "pytest_cov-6.2.1.tar.gz", hash = "sha256:25cc6cc0a5358204b8108ecedc51a9b57b34cc6b8c967cc2c01a4e00d8a67da2"},
 ]
 
 [[package]]
