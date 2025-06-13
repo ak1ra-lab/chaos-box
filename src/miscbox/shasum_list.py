@@ -5,10 +5,11 @@ import hashlib
 import os
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
-from typing import Iterator, Tuple
+from typing import Tuple
 
 import argcomplete
 
+from miscbox.gitignore import iter_files_with_respect_gitignore
 from miscbox.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -27,49 +28,51 @@ def file_digest(file_path: Path, digest: str) -> Tuple[str, Path]:
     """Calculate the hash of a file."""
     try:
         with open(file_path, "rb") as f:
-            hexdigest = hashlib.file_digest(f, SUPPORTED_DIGESTS[digest]).hexdigest()
+            hasher = SUPPORTED_DIGESTS[digest]()
+            while True:
+                chunk = f.read(8192)
+                if not chunk:
+                    break
+                hasher.update(chunk)
+            hexdigest = hasher.hexdigest()
         return (hexdigest, file_path)
     except Exception as err:
         logger.error("Error processing %s: %s", file_path, err)
-
-
-def find_files(directory: Path) -> Iterator[Path]:
-    """Generator that yields all files in a directory recursively."""
-    for root, _, files in os.walk(directory):
-        for file in files:
-            yield Path(root) / file
+        return None  # Explicitly return None for later filtering
 
 
 def process_directory(
-    directory: Path, digest: str = DEFAULT_DIGEST, workers: int = None
+    directory: Path,
+    digest: str = DEFAULT_DIGEST,
+    respect_gitignore: bool = False,
+    workers: int = None,
 ) -> None:
     """Process all files in a directory to calculate their hashes."""
-    output_file = directory.with_name(f"{directory.name}.{digest}sum")
-    files = list(find_files(directory))
-
+    files = list(iter_files_with_respect_gitignore(directory, respect_gitignore))
     if not files:
         logger.warning("No files found in directory: %s", directory)
         return
 
     logger.info("Processing %d files with %s...", len(files), digest)
-
     try:
         with ProcessPoolExecutor(max_workers=workers) as executor:
             results = executor.map(
                 file_digest,
                 files,
                 [digest] * len(files),
-                chunksize=10,  # Balance between overhead and memory usage
+                chunksize=10,
             )
 
+        filtered_results = [r for r in results if r is not None]
         # Sort results by file path
-        sorted_results = sorted(results, key=lambda x: x[1])
+        sorted_results = sorted(filtered_results, key=lambda x: str(x[1]))
 
         # Write to output file
+        output_file = directory.with_name(f"{directory.name}.{digest}")
         with open(output_file, "w", encoding="utf-8") as f:
             for hash_value, file_path in sorted_results:
-                relative_path = os.path.relpath(file_path, directory)
-                f.write(f"{hash_value}  {relative_path}\n")
+                relpath = file_path.relative_to(directory)
+                f.write(f"{hash_value}  {relpath}\n")
 
         logger.info("Results written to: %s", output_file)
 
@@ -95,6 +98,12 @@ def parse_args():
         help=f"Hash algorithm to use (default: {DEFAULT_DIGEST})",
     )
     parser.add_argument(
+        "-g",
+        "--respect-gitignore",
+        action="store_true",
+        help="Respect .gitignore files when listing files",
+    )
+    parser.add_argument(
         "-j",
         "--jobs",
         type=int,
@@ -112,13 +121,19 @@ def main():
     try:
         directory = Path(args.directory).resolve()
         if not directory.is_dir():
-            raise ValueError("Not a directory: %s", directory)
+            raise ValueError("Not a directory: %s" % directory)
 
         logger.debug("Processing directory: %s", directory)
         logger.debug("Using hash algorithm: %s", args.digest)
         logger.debug("Using %s workers", args.jobs or "auto")
+        logger.debug("Respect .gitignore: %s", args.respect_gitignore)
 
-        process_directory(directory, args.digest, args.jobs)
+        process_directory(
+            directory,
+            args.digest,
+            args.respect_gitignore,
+            args.jobs,
+        )
 
     except Exception as err:
         logger.error(err)
