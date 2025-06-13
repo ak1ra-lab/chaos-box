@@ -44,7 +44,7 @@ def main():
         description="Display network interface statistics."
     )
     parser.add_argument(
-        "-p", "--pattern", default=".*", help="Filter interfaces by regex pattern"
+        "pattern", nargs="?", default=".*", help="Filter interfaces by regex"
     )
     argcomplete.autocomplete(parser)
     args = parser.parse_args()

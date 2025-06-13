@@ -40,7 +40,7 @@ pdm venv activate
 - enc-recover: [乱码恢复指北 | Re:Linked](https://blog.outv.im/2019/encoding-guide/)
 - merge-ip-ranges: 用于合并与去重 IP addresses, 从标准输入或文件中读取
 - mobi-archive: 用于批量将从 vol.moe 下载的 `.mobi` 格式的漫画转换为 `.zip` (即 `.cbz`) 格式, 并不是适用于其它类型的电子书
-- net-stats: 显示各网卡开机以来流量
+- netstats: 显示各网卡开机以来流量和 packet 计数, 可以使用 regex 过滤网卡名称
 - punc-conv: 将文件中出现的全角标点符号转换为半角标点符号
 - rename-with-date: 将目录中特定后缀的文件重命名为带日期前缀 (日期为文件的 mtime)
 - rotate-images: 用于创建旋转头像
