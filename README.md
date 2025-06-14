@@ -40,9 +40,7 @@ pdm venv activate
 
 - deb-extract: 列举当前目录下所有 `.deb` package 并解压到同名目录
 - dir-archive: 列举当前目录下所有文件夹, 批量将文件夹创建为同名压缩档, 支持多种压缩档格式
-- enc-recover: 参考 [乱码恢复指北](https://blog.outv.im/2019/encoding-guide/), 用途不大
 - merge-ip-ranges: 从标准输入或文件中读取 IP addresses 并对其合并与去重
-- mobi-archive: 批量将 vol.moe 下载的 `.mobi` 格式的漫画转换为 `.zip` (即 `.cbz`) 压缩档, 并不适用于其它类型的电子书
 - netstats: 显示各网卡开机以来流量和 packet 计数, 可以使用 regex 过滤网卡名称
 - pconv: 将文件中出现的全角标点符号转换为半角标点符号
 - rename-with-date: 将目录中特定后缀的文件重命名为 mtime 日期前缀
@@ -53,4 +51,4 @@ pdm venv activate
 
 ## TODO
 
-- [ ] add zstd support for `deb-extract`
+- [ ] add zstd support on `deb-extract`
