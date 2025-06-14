@@ -7,6 +7,7 @@ authors = [
 ]
 dependencies = [
     "argcomplete>=3.6.2",
+    "fastbencode>=0.3.2",
     "httpx>=0.28.1",
     "mobi>=0.3.3",
     "netaddr>=1.3.0",
@@ -16,6 +17,9 @@ dependencies = [
     "Pillow>=11.2.1",
     "psutil>=7.0.0",
     "py7zr>=1.0.0",
+    "pypng>=0.20220715.0",
+    "pyzbar>=0.1.9",
+    "qrcode>=8.2",
 ]
 requires-python = ">=3.11"
 classifiers = [
@@ -41,6 +45,10 @@ dir-archive = "miscbox.cmd.dir_archive:main"
 merge-ip-ranges = "miscbox.cmd.merge_ip_ranges:main"
 netstats = "miscbox.cmd.netstats:main"
 pconv = "miscbox.cmd.pconv:main"
+qbt-dump = "miscbox.cmd.qbt_dump:main"
+qbt-migrate = "miscbox.cmd.qbt_migrate:main"
+qrcode-merge = "miscbox.cmd.qrcode_merge:main"
+qrcode-split = "miscbox.cmd.qrcode_split:main"
 rename-with-date = "miscbox.cmd.rename_with_date:main"
 rotate-images = "miscbox.cmd.rotate_images:main"
 shasum-list = "miscbox.cmd.shasum_list:main"

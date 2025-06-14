@@ -5,7 +5,7 @@
 groups = ["default", "dev", "lint", "tests"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:c76d1e775f5882478ecf9800bf13d8cabb06455ce70fbcc27dfa40d0613ccd2f"
+content_hash = "sha256:c39f85fc723b3147bcb420426df8d23d6d64edb329c4cae1796f39b9b5cac4b6"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
@@ -361,6 +361,41 @@ groups = ["dev"]
 files = [
     {file = "distlib-0.3.9-py2.py3-none-any.whl", hash = "sha256:47f8c22fd27c27e25a65601af709b38e4f0a45ea4fc2e710f65755fa8caaaf87"},
     {file = "distlib-0.3.9.tar.gz", hash = "sha256:a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403"},
+]
+
+[[package]]
+name = "fastbencode"
+version = "0.3.2"
+requires_python = ">=3.9"
+summary = "Implementation of bencode with optional fast C extensions"
+groups = ["default"]
+files = [
+    {file = "fastbencode-0.3.2-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:7b90e3eb865fe363c89242e6bc94b66df2cfae40a5ffdf3d3c89329d838e0c20"},
+    {file = "fastbencode-0.3.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b6e8695f11c6c284efa8e837c83783beb0978b943746af788a793b2bbdd2eb77"},
+    {file = "fastbencode-0.3.2-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a93b406a8d4c3390771d376bd6d6cfb3d12a4a56166f2974d7d9835df4c911f7"},
+    {file = "fastbencode-0.3.2-cp311-cp311-musllinux_1_2_i686.whl", hash = "sha256:7f518e5634ca3f674e8d1e974a9e83ddfdcd7ddc18bcbf54821cc313e18b6de0"},
+    {file = "fastbencode-0.3.2-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:a32d29f55bb2218bf552a57d507f0711ce070ac5fb1abce14a168eaa5b1a0ad0"},
+    {file = "fastbencode-0.3.2-cp311-cp311-win32.whl", hash = "sha256:5b50840085e958e6a331f3364e1e032b4b10d0d1b123d177f0bec9308d589676"},
+    {file = "fastbencode-0.3.2-cp311-cp311-win_amd64.whl", hash = "sha256:ec82c78bb8824f3acc9105b642c58cbff9eb5cb237b4902a8f730743447e6766"},
+    {file = "fastbencode-0.3.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:7ffbf7551adae0aecf39a6e0850c0dc33fa428572a451cb1ef56328b473168ca"},
+    {file = "fastbencode-0.3.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5fc16b7df558dfa39a2586a76ad9e72a1b108e50a4e7187077e5a1ca29c1c2e0"},
+    {file = "fastbencode-0.3.2-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:19e89504a0ccaf7789e18ee0a6b48fff1cce288d2ece1bca54240b3e82a67e35"},
+    {file = "fastbencode-0.3.2-cp312-cp312-musllinux_1_2_i686.whl", hash = "sha256:e79fb7ccff2065e9eb1ed4a990f4ad153567684f65bf7bec30d9618c7670ca9c"},
+    {file = "fastbencode-0.3.2-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:480db8ab2ed478be485cded45680d0f6aac3d718b551b83aba6912d85b33606f"},
+    {file = "fastbencode-0.3.2-cp312-cp312-win32.whl", hash = "sha256:eff9e947c4655ba9747d5dabf3208c6c9a8d0cd809fde6cd33d3273a298f2c5f"},
+    {file = "fastbencode-0.3.2-cp312-cp312-win_amd64.whl", hash = "sha256:ee4ba505e67ab84c25a01f4ff2e4c344ad5a76d2db13bfd3585c1d05b886a1c4"},
+    {file = "fastbencode-0.3.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:02431ba43d8ef3a2f3338cdba5a8daa9e6aa0c5532e35a10132890438086f2ff"},
+    {file = "fastbencode-0.3.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f260e2e0a6c517c50cd1b9d732f784d21ee50a93cb845f5f9e2ee4b77df7f292"},
+    {file = "fastbencode-0.3.2-cp313-cp313-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:d71f6f46a0edfb1a2c0a57761849d10f85bf2fb2cd037809d30852c048308066"},
+    {file = "fastbencode-0.3.2-cp313-cp313-musllinux_1_2_i686.whl", hash = "sha256:4ead404ca72a6d792a90f0ab2e2703c503cd9b8835d133eb085acd8701d29fbc"},
+    {file = "fastbencode-0.3.2-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:5b25490dc0ed5dcdf9fcbb9c21fe06c76d3a07f6410ca589d5e4180c736de612"},
+    {file = "fastbencode-0.3.2-cp313-cp313-win32.whl", hash = "sha256:ffa09e4dad874fcb92309d7bab53be0fc316b2c4c923bdbb388f68cb60224aff"},
+    {file = "fastbencode-0.3.2-cp313-cp313-win_amd64.whl", hash = "sha256:f15e21b7a81cfac511149b02fb63d18c97a9edff2c82d828b0df95b3ce4d6247"},
+    {file = "fastbencode-0.3.2-pp311-pypy311_pp73-macosx_11_0_arm64.whl", hash = "sha256:41acd5ceb0eb2aab96a9e997935b7b86ae8fb2c41592b173111e42bd9338caea"},
+    {file = "fastbencode-0.3.2-pp311-pypy311_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bacdcca4ef0dab1bad57143682f324d309fb7b38050765d02bdbc61812ff47e5"},
+    {file = "fastbencode-0.3.2-pp311-pypy311_pp73-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:de6da89a88702c3093f1e4e40e9931c538c13de27c5afc21b9568ceba280ef62"},
+    {file = "fastbencode-0.3.2-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:0bb493c0c7c989d9c73fe721419062c01ad6fb7f4cf6fcd16eef9c8e0b71a497"},
+    {file = "fastbencode-0.3.2.tar.gz", hash = "sha256:a34c32c504b0ec9de1a499346ed24932359eb46234b28b70975a50fdfaa14ab5"},
 ]
 
 [[package]]
@@ -902,6 +937,16 @@ files = [
 ]
 
 [[package]]
+name = "pypng"
+version = "0.20220715.0"
+summary = "Pure Python library for saving and loading PNG images"
+groups = ["default"]
+files = [
+    {file = "pypng-0.20220715.0-py3-none-any.whl", hash = "sha256:4a43e969b8f5aaafb2a415536c1a8ec7e341cd6a3f957fd5b5f32a4cfeed902c"},
+    {file = "pypng-0.20220715.0.tar.gz", hash = "sha256:739c433ba96f078315de54c0db975aee537cbc3e1d0ae4ed9aab0ca1e427e2c1"},
+]
+
+[[package]]
 name = "pyppmd"
 version = "1.2.0"
 requires_python = ">=3.9"
@@ -1017,6 +1062,21 @@ files = [
 ]
 
 [[package]]
+name = "pyzbar"
+version = "0.1.9"
+summary = "Read one-dimensional barcodes and QR codes from Python 2 and 3."
+groups = ["default"]
+dependencies = [
+    "enum34>=1.1.6; python_version == \"2.7\"",
+    "pathlib>=1.0.1; python_version == \"2.7\"",
+]
+files = [
+    {file = "pyzbar-0.1.9-py2.py3-none-any.whl", hash = "sha256:4559628b8192feb25766d954b36a3753baaf5c97c03135aec7e4a026036b475d"},
+    {file = "pyzbar-0.1.9-py2.py3-none-win32.whl", hash = "sha256:8f4c5264c9c7c6b9f20d01efc52a4eba1ded47d9ba857a94130afe33703eb518"},
+    {file = "pyzbar-0.1.9-py2.py3-none-win_amd64.whl", hash = "sha256:13e3ee5a2f3a545204a285f41814d5c0db571967e8d4af8699a03afc55182a9c"},
+]
+
+[[package]]
 name = "pyzstd"
 version = "0.17.0"
 requires_python = ">=3.5"
@@ -1078,6 +1138,20 @@ files = [
     {file = "pyzstd-0.17.0-pp311-pypy311_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:226ca0430e2357abae1ade802585231a2959b010ec9865600e416652121ba80b"},
     {file = "pyzstd-0.17.0-pp311-pypy311_pp73-win_amd64.whl", hash = "sha256:e3a19e8521c145a0e2cd87ca464bf83604000c5454f7e0746092834fd7de84d1"},
     {file = "pyzstd-0.17.0.tar.gz", hash = "sha256:d84271f8baa66c419204c1dd115a4dec8b266f8a2921da21b81764fa208c1db6"},
+]
+
+[[package]]
+name = "qrcode"
+version = "8.2"
+requires_python = "<4.0,>=3.9"
+summary = "QR Code image generator"
+groups = ["default"]
+dependencies = [
+    "colorama; sys_platform == \"win32\"",
+]
+files = [
+    {file = "qrcode-8.2-py3-none-any.whl", hash = "sha256:16e64e0716c14960108e85d853062c9e8bba5ca8252c0b4d0231b9df4060ff4f"},
+    {file = "qrcode-8.2.tar.gz", hash = "sha256:35c3f2a4172b33136ab9f6b3ef1c00260dd2f66f858f24d88418a015f446506c"},
 ]
 
 [[package]]
