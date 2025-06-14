@@ -38,28 +38,31 @@ class DebExtractor:
         try:
             with open(deb_path, "rb") as f:
                 ar = arfile.ArFile(fileobj=f)
-                self._extract_ar_contents(ar, extract_dir)
+                self._extract_ar_members(ar, extract_dir)
             logger.info(f"Successfully extracted {deb_path.name} to {extract_dir}")
-        except (OSError, arfile.ArError, tarfile.TarError) as e:
+        except (OSError, arfile.ArError, tarfile.TarError, NotImplementedError) as e:
             shutil.rmtree(extract_dir, ignore_errors=True)
             logger.error(f"Failed to process {deb_path.name}: {str(e)}", exc_info=True)
 
-    def _extract_ar_contents(self, ar: arfile.ArFile, extract_dir: Path):
+    def _extract_ar_members(self, ar: arfile.ArFile, extract_dir: Path):
         control_dir = extract_dir / "control"
         data_dir = extract_dir / "data"
 
-        control_dir.mkdir(parents=True)
-        data_dir.mkdir()
-
         for member in ar.getmembers():
             if member.name.startswith("control.tar"):
-                with tarfile.open(fileobj=ar.extractfile(member)) as tar:
-                    tar.extractall(path=control_dir)
-                logger.debug(f"Extracted control files to {control_dir}")
+                self._extract_ar_member(member, control_dir)
             elif member.name.startswith("data.tar"):
-                with tarfile.open(fileobj=ar.extractfile(member)) as tar:
-                    tar.extractall(path=data_dir)
-                logger.debug(f"Extracted data files to {data_dir}")
+                self._extract_ar_member(member, data_dir)
+
+    def _extract_ar_member(self, member: arfile.ArMember, extract_dir: Path):
+        if member.name.endswith(".tar.zst"):
+            logger.warning(f"Skipping {member.name}")
+            raise NotImplementedError("Zstandard compression is not implemented yet")
+
+        extract_dir.mkdir(parents=True, exist_ok=True)
+        with tarfile.open(fileobj=member) as tar:
+            tar.extractall(path=extract_dir)
+        logger.debug(f"Extracted {member.name} to {extract_dir}")
 
     def _remove_extracted(self, extract_dir: Path):
         if extract_dir.exists() and extract_dir.is_dir():
