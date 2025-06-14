@@ -16,7 +16,7 @@ def archive_directory(dir_name, format):
     """Archive the directory based on the format type."""
     # root_dir and base_dir both default to the current directory
     shutil.make_archive(base_name=dir_name, format=format, base_dir=dir_name)
-    logger.info(f"Archived directory '{dir_name}' into '{format}' format")
+    logger.info("Archived directory '%s' into '%s' format", dir_name, format)
 
 
 def dir_archive(format, max_workers):
@@ -33,8 +33,8 @@ def dir_archive(format, max_workers):
             dir_name = futures[future]
             try:
                 future.result()
-            except Exception as exc:
-                logger.error(f"Error archiving directory '{dir_name}': {exc}")
+            except Exception as err:
+                logger.error("Error archiving directory '%s': %s", dir_name, err)
 
 
 def main():

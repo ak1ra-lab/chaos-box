@@ -20,7 +20,7 @@ def gen_circle_mask(im: Image.Image, upscale: int = 3) -> Image.Image:
     draw = ImageDraw.Draw(mask)
     draw.ellipse((0, 0) + size, fill=255)
     mask = mask.resize(im.size, resample=Image.Resampling.LANCZOS)
-    logger.debug(f"mask = {mask}")
+    logger.debug("mask = %s", mask)
 
     return mask
 
@@ -106,11 +106,11 @@ def main() -> None:
 
     for image in args.images:
         image = Path(image).expanduser().resolve()
-        logger.info(f"Processing image: {image}")
+        logger.info("Processing image: %s", image)
 
         with Image.open(image) as im:
             frames = gen_rotated_frames(im, step=args.step, trim=args.trim)
-            logger.debug(f"len(frames) = {len(frames)}")
+            logger.debug("len(frames) = %d", len(frames))
 
         if args.reverse:
             # clockwise (cw) if set, counter clockwise (ccw) if not
@@ -125,7 +125,7 @@ def main() -> None:
             image.parent
             / f"{image.stem}-{len(frames)}p@{args.fps}fps-{direction}{trim}.{args.format}"
         )
-        logger.info(f"Saving frames to: {file_path}")
+        logger.info("Saving frames to: %s", file_path)
         if args.format == "gif":
             frames[0].save(
                 file_path,

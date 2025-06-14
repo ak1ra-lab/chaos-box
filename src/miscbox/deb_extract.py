@@ -32,17 +32,19 @@ class DebExtractor:
 
     def _extract_deb(self, deb_path: Path, extract_dir: Path):
         if extract_dir.exists():
-            logger.info(f"Skipping {deb_path.name} (already extracted)")
+            logger.info("Skipping '%s' (already extracted)", deb_path.name)
             return
 
         try:
             with open(deb_path, "rb") as f:
                 ar = arfile.ArFile(fileobj=f)
                 self._extract_ar_members(ar, extract_dir)
-            logger.info(f"Successfully extracted {deb_path.name} to {extract_dir}")
-        except (OSError, arfile.ArError, tarfile.TarError, NotImplementedError) as e:
+            logger.info(
+                "Successfully extracted '%s' to '%s'", deb_path.name, extract_dir
+            )
+        except (OSError, arfile.ArError, tarfile.TarError, NotImplementedError) as err:
             shutil.rmtree(extract_dir, ignore_errors=True)
-            logger.error(f"Failed to process {deb_path.name}: {str(e)}", exc_info=True)
+            logger.error("Failed to process '%s': '%s'", deb_path.name, err)
 
     def _extract_ar_members(self, ar: arfile.ArFile, extract_dir: Path):
         control_dir = extract_dir / "control"
@@ -56,21 +58,21 @@ class DebExtractor:
 
     def _extract_ar_member(self, member: arfile.ArMember, extract_dir: Path):
         if member.name.endswith(".tar.zst"):
-            logger.warning(f"Skipping {member.name}")
+            logger.warning("Skipping '%s'", member.name)
             raise NotImplementedError("Zstandard compression is not implemented yet")
 
         extract_dir.mkdir(parents=True, exist_ok=True)
         with tarfile.open(fileobj=member) as tar:
             tar.extractall(path=extract_dir)
-        logger.debug(f"Extracted {member.name} to {extract_dir}")
+        logger.debug("Extracted '%s' to '%s'", member.name, extract_dir)
 
     def _remove_extracted(self, extract_dir: Path):
         if extract_dir.exists() and extract_dir.is_dir():
             try:
                 shutil.rmtree(extract_dir)
-                logger.info(f"Successfully removed {extract_dir}")
-            except OSError as e:
-                logger.error(f"Failed to remove {extract_dir}: {str(e)}", exc_info=True)
+                logger.info("Successfully removed '%s'", extract_dir)
+            except OSError as err:
+                logger.error("Failed to remove '%s': '%s'", extract_dir, err)
 
     def run(self):
         deb_files = sorted(self.cwd.glob("*.deb"))
@@ -78,7 +80,7 @@ class DebExtractor:
             logger.warning("No .deb files found in current directory")
             return
 
-        logger.info(f"Found {len(deb_files)} .deb file(s) to process")
+        logger.info("Found %d .deb file(s) to process", len(deb_files))
         for deb_file in deb_files:
             self.process_deb(deb_file)
 
