@@ -44,7 +44,7 @@ pdm venv activate
 - merge-ip-ranges: 从标准输入或文件中读取 IP addresses 并对其合并与去重
 - mobi-archive: 批量将 vol.moe 下载的 `.mobi` 格式的漫画转换为 `.zip` (即 `.cbz`) 压缩档, 并不适用于其它类型的电子书
 - netstats: 显示各网卡开机以来流量和 packet 计数, 可以使用 regex 过滤网卡名称
-- punc-conv: 将文件中出现的全角标点符号转换为半角标点符号
+- pconv: 将文件中出现的全角标点符号转换为半角标点符号
 - rename-with-date: 将目录中特定后缀的文件重命名为 mtime 日期前缀
 - rotate-images: 创建 .mp4 或 .gif 格式的可以旋转的头像
 - shasum-list: 计算特定目录下所有文件的 hexdigest 并保存到文件中, 支持忽略 .gitignore
