@@ -104,11 +104,11 @@ def parse_args():
         help="Respect .gitignore files when listing files",
     )
     parser.add_argument(
-        "-j",
-        "--jobs",
+        "-w",
+        "--workers",
         type=int,
         default=None,
-        help="Number of parallel jobs (default: number of CPU cores)",
+        help="Number of parallel workers (default: number of CPU cores)",
     )
     argcomplete.autocomplete(parser)
 
@@ -125,14 +125,14 @@ def main():
 
         logger.debug("Processing directory: %s", directory)
         logger.debug("Using hash algorithm: %s", args.digest)
-        logger.debug("Using %s workers", args.jobs or "auto")
+        logger.debug("Using %s workers", args.workers or "auto")
         logger.debug("Respect .gitignore: %s", args.respect_gitignore)
 
         process_directory(
             directory,
             args.digest,
             args.respect_gitignore,
-            args.jobs,
+            args.workers,
         )
 
     except Exception as err:
