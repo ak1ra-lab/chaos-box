@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2025-06-15
+
+### 🚀 Features
+
+- impl respect-gitignore option on shasum_list.py
+- migrate qbt_dump.py
+- migrate qbt_migrate.py
+- migrate qrcode_split.py
+- migrate qrcode_merge.py
+
+### 📚 Documentation
+
+- enrich README.md
+
+### ⚙️ Miscellaneous Tasks
+
+- update pyproject.toml
+- rename net_stats.py to netstats.py
+- change file_path format and default value on rotate_images.py
+- split _extract_ar_member() on deb_extract.py
+- avoid f-string on logger
+- relocate cmd files
+- rename punc_conv.py to pconv.py
+- remove some stupid tool from project.scripts
+- update dependencies on pyproject.toml
+- fixup archive_mobi.py
+- fixup archive_dirs.py
+- fixup shasum_list.py
+- fixup qrcode_split.py
+- fixup qrcode_merge.py
+- fixup qbt_dump.py
+- fixup qbt_migrate.py
+- PyPI package rename to chaos-box
+- bump version
+
 ## [0.2.0] - 2025-06-12
 
 ### 🚀 Features
