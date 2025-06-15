@@ -1,6 +1,7 @@
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
+import json
 import re
 from pathlib import Path
 
@@ -16,47 +17,62 @@ def qbt_migrate(
     file: Path,
     pattern: str,
     repl: str,
-    auto_managed=0,
-    private=0,
+    auto_managed=-1,
+    private=-1,
     apply=False,
 ):
-    with open(file, "rb") as f:
-        fastresume = bdecode(f.read())
+    try:
+        with open(file, "rb") as f:
+            fastresume = bdecode(f.read())
+    except Exception as e:
+        logger.warning("Failed to decode fastresume: %s (%s)", file, e)
+        return
 
+    # auto_managed 过滤
     if auto_managed in (0, 1):
         if fastresume.get(b"auto_managed", 0) != auto_managed:
             return
 
+    # private 过滤
     if private in (0, 1):
-        with open(file.with_suffix(".torrent"), "rb") as f:
-            torrent = bdecode(f.read())
-        if torrent.get(b"info", {}).get(b"private", 0) != private:
+        torrent_file = file.with_suffix(".torrent")
+        try:
+            with open(torrent_file, "rb") as f:
+                torrent = bdecode(f.read())
+            if torrent.get(b"info", {}).get(b"private", 0) != private:
+                return
+        except Exception as e:
+            logger.warning("Failed to decode torrent: %s (%s)", torrent_file, e)
             return
 
-    name = fastresume.get(b"name", b"").decode()
-    save_path = fastresume.get(b"save_path", b"").decode()
-    qBt_category = fastresume.get(b"qBt-category", b"").decode()
-
-    logger.info(
-        "< name: %s, save_path: %s, qBt-category: %s", name, save_path, qBt_category
-    )
+    name = fastresume.get(b"name", b"").decode(errors="replace")
+    save_path = fastresume.get(b"save_path", b"").decode(errors="replace")
+    qBt_category = fastresume.get(b"qBt-category", b"").decode(errors="replace")
 
     if not re.search(pattern, save_path):
         return
 
-    save_path = re.sub(pattern, repl, save_path)
-    qBt_category = re.sub(pattern, repl, qBt_category)
+    new_save_path = re.sub(pattern, repl, save_path)
+    new_qBt_category = re.sub(pattern, repl, qBt_category)
 
-    logger.info(
-        "> name: %s, save_path: %s, qBt-category: %s\n", name, save_path, qBt_category
-    )
+    # pretty diff 输出
+    diff = {
+        "file": file.name,
+        "name": name,
+        "save_path": {"old": save_path, "new": new_save_path},
+        "qBt-category": {"old": qBt_category, "new": new_qBt_category},
+        "apply": apply,
+    }
+    logger.info("\n%s", json.dumps(diff, indent=2, ensure_ascii=False))
 
     if apply:
-        fastresume[b"save_path"] = save_path.encode()
-        fastresume[b"qBt-category"] = qBt_category.encode()
-
-        with open(file, "wb") as f:
-            f.write(bencode(fastresume))
+        try:
+            fastresume[b"save_path"] = new_save_path.encode()
+            fastresume[b"qBt-category"] = new_qBt_category.encode()
+            with open(file, "wb") as f:
+                f.write(bencode(fastresume))
+        except Exception as e:
+            logger.error("Failed to write fastresume: %s (%s)", file, e)
 
 
 def parse_args():
@@ -78,17 +94,17 @@ def parse_args():
     )
     parser.add_argument(
         "--auto_managed",
-        choices=(0, 1),
-        default=2,
+        choices=(-1, 0, 1),
+        default=-1,
         type=int,
-        help="filter auto_managed(1) or not(0) tasks",
+        help="filter auto_managed(1) or not(0) tasks, -1 for not filtering",
     )
     parser.add_argument(
         "--private",
-        choices=(0, 1),
-        default=2,
+        choices=(-1, 0, 1),
+        default=-1,
         type=int,
-        help="filter private(1) or public(0) tasks",
+        help="filter private(1) or public(0) tasks, -1 for not filtering",
     )
     parser.add_argument(
         "--apply",
@@ -104,10 +120,10 @@ def main():
     args = parse_args()
     BT_backup = Path(args.BT_backup).resolve()
     if not BT_backup.exists():
-        logger.warning("BT_backup: %s does not exists", BT_backup)
+        logger.warning("BT_backup: %s does not exist", BT_backup)
         return
 
-    for file in BT_backup.rglob("*.fastresume"):
+    for file in BT_backup.glob("*.fastresume"):
         qbt_migrate(
             file, args.pattern, args.repl, args.auto_managed, args.private, args.apply
         )
