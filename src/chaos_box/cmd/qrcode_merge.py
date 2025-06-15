@@ -9,7 +9,7 @@ import argcomplete
 from PIL import Image
 from pyzbar.pyzbar import decode
 
-from miscbox.logging import setup_logger
+from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

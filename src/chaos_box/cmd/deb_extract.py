@@ -12,7 +12,7 @@ import argcomplete
 # pdm venv create -- 3.11 --system-site-packages
 from debian import arfile
 
-from miscbox.logging import setup_logger
+from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

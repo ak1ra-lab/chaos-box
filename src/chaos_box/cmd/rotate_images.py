@@ -8,7 +8,7 @@ import cv2
 import numpy
 from PIL import Image, ImageDraw, ImageOps
 
-from miscbox.logging import setup_logger
+from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

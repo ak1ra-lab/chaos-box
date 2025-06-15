@@ -9,8 +9,8 @@ from typing import Tuple
 
 import argcomplete
 
-from miscbox.gitignore import iter_files_with_respect_gitignore
-from miscbox.logging import setup_logger
+from chaos_box.gitignore import iter_files_with_respect_gitignore
+from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

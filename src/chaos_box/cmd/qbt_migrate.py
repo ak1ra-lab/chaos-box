@@ -8,7 +8,7 @@ from pathlib import Path
 import argcomplete
 from fastbencode import bdecode, bencode
 
-from miscbox.logging import setup_logger
+from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

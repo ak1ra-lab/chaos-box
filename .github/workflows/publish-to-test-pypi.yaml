@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: test-pypi
-      url: https://test.pypi.org/p/miscbox
+      url: https://test.pypi.org/p/chaos-box
 
     permissions:
       # This permission is needed for private repositories.

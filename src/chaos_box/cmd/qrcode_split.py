@@ -12,7 +12,7 @@ import argcomplete
 import qrcode
 from PIL import ImageDraw, ImageFont
 
-from miscbox.logging import setup_logger
+from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 
