@@ -17,7 +17,7 @@ pipx install chaos-box \
     --pip-args "--extra-index-url https://pypi.org/simple/"
 ```
 
-> 对于 Debian 系统而言, 由于 [`deb-extract`](src/chaos_box/deb_extract.py) 工具用到了 [`python3-debian`](https://salsa.debian.org/python-debian-team/python-debian) 这个 package, 而 `python3-debian` 并没有上传到 PyPI 中, 因此在使用 pipx install 时除了到带上 `--system-site-packages` 选项外, 可能你也需要手动安装下 `python3-debian` package.
+> 对于 Debian 系统而言, 由于 [`deb-extract`](src/chaos_box/cmd/deb_extract.py) 工具用到了 [`python3-debian`](https://salsa.debian.org/python-debian-team/python-debian) 这个 package, 而 `python3-debian` 并没有上传到 PyPI 中, 因此在使用 pipx install 时除了到带上 `--system-site-packages` 选项外, 可能你也需要手动安装下 `python3-debian` package.
 
 ```shell
 sudo apt install python3-debian
@@ -38,11 +38,16 @@ pdm venv activate
 
 所有命令行工具都可以使用 `-h` 或 `--help` 查看帮助信息, 下面是简要说明,
 
+- archive-dirs: 列举当前目录下所有文件夹, 批量将文件夹创建为同名压缩档, 支持多种压缩档格式
+- archive-mobi: 一个将 vol.moe 下载的 mobi 漫画文件转换为多种压缩档格式的小工具, 很久没用了, 可能缺乏维护
 - deb-extract: 列举当前目录下所有 `.deb` package 并解压到同名目录
-- dir-archive: 列举当前目录下所有文件夹, 批量将文件夹创建为同名压缩档, 支持多种压缩档格式
 - merge-ip-ranges: 从标准输入或文件中读取 IP addresses 并对其合并与去重
 - netstats: 显示各网卡开机以来流量和 packet 计数, 可以使用 regex 过滤网卡名称
 - pconv: 将文件中出现的全角标点符号转换为半角标点符号
+- qbt-dump: 导出 .torrent 和 qBittorrent .fastresume 文件内容
+- qbt-migrate: 迁移 qBittorrent BT_backup 目录中的 save_path 和 qBt-category
+- qrcode-merge: 将 qrcode-split 拆分后的文件合并为原文件
+- qrcode-split: 将任意 text 或 binary 文件拆分成一系列 QR code 文件
 - rename-with-date: 将目录中特定后缀的文件重命名为 mtime 日期前缀
 - rotate-images: 创建 .mp4 或 .gif 格式的可以旋转的头像
 - shasum-list: 计算特定目录下所有文件的 hexdigest 并保存到文件中, 支持忽略 .gitignore
