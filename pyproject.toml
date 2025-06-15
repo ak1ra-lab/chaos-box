@@ -41,7 +41,7 @@ Changelog = "https://github.com/ak1ra-lab/miscbox/blob/master/CHANGELOG.md"
 
 [project.scripts]
 deb-extract = "miscbox.cmd.deb_extract:main"
-dir-archive = "miscbox.cmd.dir_archive:main"
+archive-dirs = "miscbox.cmd.archive_dirs:main"
 merge-ip-ranges = "miscbox.cmd.merge_ip_ranges:main"
 netstats = "miscbox.cmd.netstats:main"
 pconv = "miscbox.cmd.pconv:main"
