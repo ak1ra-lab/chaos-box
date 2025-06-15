@@ -3,7 +3,6 @@
 import argparse
 import base64
 import math
-import os
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
@@ -31,19 +30,15 @@ def iter_file_path_into_chunks(
             index += 1
 
 
-def encode_chunk_to_base64(chunk: bytes) -> str:
-    return base64.b64encode(chunk).decode("utf-8")
-
-
-def generate_qr_code(data_info: Tuple[str, int, int, str, str]) -> None:
-    data, index, total_count, output_dir, prefix = data_info
+def generate_qr_code(data_info: Tuple[bytes, int, int, Path, str]) -> None:
+    chunk, index, total_count, output_dir, prefix = data_info
     qr = qrcode.QRCode(
         version=40,  # Version 40 is the largest, can store up to 2953 bytes in binary mode
         error_correction=qrcode.constants.ERROR_CORRECT_L,
         box_size=10,
         border=4,
     )
-    qr.add_data(data)
+    qr.add_data(base64.b64encode(chunk).decode("utf-8"))
     qr.make(fit=True)
 
     img = qr.make_image(fill="black", back_color="white").convert("RGB")
@@ -51,7 +46,10 @@ def generate_qr_code(data_info: Tuple[str, int, int, str, str]) -> None:
     # Add footer with index/total_count_of_files
     draw = ImageDraw.Draw(img)
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-    font = ImageFont.truetype(font_path, 20)
+    try:
+        font = ImageFont.truetype(font_path, 20)
+    except Exception:
+        font = ImageFont.load_default()
     text = f"{index}/{total_count}"
     textbbox = draw.textbbox((0, 0), text, font=font)
     textwidth = textbbox[2] - textbbox[0]
@@ -62,24 +60,18 @@ def generate_qr_code(data_info: Tuple[str, int, int, str, str]) -> None:
 
     draw.text((text_x, text_y), text, font=font, fill="black")
 
-    img_path = os.path.join(
-        output_dir, f"{prefix}_{index:0{len(str(total_count))}d}.png"
-    )
+    img_path = output_dir / f"{prefix}_{index:0{len(str(total_count))}d}.png"
     img.save(img_path)
     logger.info("Saved QR code %s to %s", index, img_path)
 
 
-def calculate_total_chunks(file_size: int, chunk_size: int) -> int:
-    return math.ceil(file_size / chunk_size)
-
-
-def get_existing_indices(output_dir: str, prefix: str) -> List[int]:
-    existing_files = os.listdir(output_dir)
+def get_existing_indices(output_dir: Path, prefix: str) -> List[int]:
+    existing_files = output_dir.glob("*.png")
     indices = []
     for file in existing_files:
-        if file.startswith(prefix) and file.endswith(".png"):
+        if file.name.startswith(prefix + "_"):
             try:
-                index = int(file[len(prefix) + 1 : -4])
+                index = int(file.stem[len(prefix) + 1 :])
                 indices.append(index)
             except ValueError:
                 continue
@@ -92,7 +84,10 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("file", help="Path to the input file (text or binary).")
     parser.add_argument(
-        "-O", "--output-dir", help="Directory to save the QR code images.", default=None
+        "-O",
+        "--output-dir",
+        default=".",
+        help="Directory to save the QR code images.",
     )
     parser.add_argument(
         "-c",
@@ -121,11 +116,11 @@ def parse_args() -> argparse.Namespace:
         help="Number of QR code images to generate.",
     )
     parser.add_argument(
-        "-j",
-        "--jobs",
+        "-w",
+        "--workers",
         type=int,
-        default=4,
-        help="Number of jobs to use.",
+        default=None,
+        help="Number of parallel workers (default: number of CPU cores)",
     )
     argcomplete.autocomplete(parser)
 
@@ -135,49 +130,49 @@ def parse_args() -> argparse.Namespace:
 def main():
     args = parse_args()
 
-    file_name = os.path.basename(args.file)
-    file_base_name = os.path.splitext(file_name)[0]
+    file_path = Path(args.file)
+    if not file_path.exists():
+        logger.error("Input file does not exist: %s", file_path)
+        return
 
-    chunk_size = args.chunk_size
-    file_size = os.path.getsize(args.file)
-    total_chunks = calculate_total_chunks(file_size, chunk_size)
+    total_chunks = math.ceil(file_path.stat().st_size / args.chunk_size)
 
     if args.calc:
         logger.info("Total QR code files needed: %d", total_chunks)
         return
 
-    output_dir = args.output_dir or os.path.join("output", file_base_name)
-    os.makedirs(output_dir, exist_ok=True)
-    logger.info("Splitting %s into %d QR codes.", args.file, total_chunks)
+    logger.info("Splitting %s into %d QR codes.", file_path, total_chunks)
+
+    output_dir = Path(args.output_dir) / file_path.stem
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     if args.resume:
-        existing_indices = get_existing_indices(output_dir, file_base_name)
+        existing_indices = get_existing_indices(output_dir, file_path.stem)
     else:
         existing_indices = []
 
     last_index = existing_indices[-1] if existing_indices else 0
 
     count = 0
-    tasks = []
-    with ProcessPoolExecutor(max_workers=args.jobs) as executor:
-        for chunk, index in iter_file_path_into_chunks(Path(args.file), chunk_size):
+    futures = []
+    with ProcessPoolExecutor(max_workers=args.workers) as executor:
+        for chunk, index in iter_file_path_into_chunks(file_path, args.chunk_size):
             if index <= last_index:
                 continue
 
             count += 1
             if count > args.limit:
                 break
-            encoded_chunk = encode_chunk_to_base64(chunk)
             data_info = (
-                encoded_chunk,
+                chunk,
                 index,
                 total_chunks,
                 output_dir,
-                file_base_name,
+                file_path.stem,
             )
-            tasks.append(executor.submit(generate_qr_code, data_info))
+            futures.append(executor.submit(generate_qr_code, data_info))
 
-        for future in as_completed(tasks):
+        for future in as_completed(futures):
             try:
                 future.result()
             except Exception as err:
