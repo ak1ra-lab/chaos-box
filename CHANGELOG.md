@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.2] - 2025-06-16
+
+### 🚜 Refactor
+
+- keep using python-debian on deb_extract.py
+
+### ⚙️ Miscellaneous Tasks
+
+- bump version
+
 ## [0.3.1] - 2025-06-16
 
 ### 🚜 Refactor
