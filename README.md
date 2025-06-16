@@ -8,30 +8,12 @@ Collection of handy utils written in Python 3
 
 ```shell
 # install from PyPI
-pipx install chaos-box --system-site-packages
+pipx install chaos-box
 
 # install from Test PyPI
 pipx install chaos-box \
-    --system-site-packages \
     --index-url https://test.pypi.org/simple/ \
     --pip-args "--extra-index-url https://pypi.org/simple/"
-```
-
-> 对于 Debian 系统而言, 由于 [`deb-extract`](src/chaos_box/cmd/deb_extract.py) 工具用到了 [`python3-debian`](https://salsa.debian.org/python-debian-team/python-debian) 这个 package, 而 `python3-debian` 并没有上传到 PyPI 中, 因此在使用 pipx install 时除了到带上 `--system-site-packages` 选项外, 可能你也需要手动安装下 `python3-debian` package.
-
-```shell
-sudo apt install python3-debian
-```
-
-> 在本地开发时, 使用 pdm 创建 venv 时也需要添加 `--system-site-packages`, 下面指令中的 `3.11` 是 Python 版本
-
-```shell
-# pdm venv backend defaults to virtualenv
-pdm venv create -- 3.11 --system-site-packages
-
-# install dependencies and activate venv
-pdm install
-pdm venv activate
 ```
 
 ## tools

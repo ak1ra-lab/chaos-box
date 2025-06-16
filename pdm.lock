@@ -5,7 +5,7 @@
 groups = ["default", "dev", "lint", "tests"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:c39f85fc723b3147bcb420426df8d23d6d64edb329c4cae1796f39b9b5cac4b6"
+content_hash = "sha256:70bc4f7e080906b51b289be1bb4ee741c3fc7d992d7ccfec3ee5350f1a8abb72"
 
 [[metadata.targets]]
 requires_python = ">=3.11"
@@ -1212,6 +1212,17 @@ marker = "python_version < \"3.13\""
 files = [
     {file = "typing_extensions-4.14.0-py3-none-any.whl", hash = "sha256:a1514509136dd0b477638fc68d6a91497af5076466ad0fa6c338e44e359944af"},
     {file = "typing_extensions-4.14.0.tar.gz", hash = "sha256:8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4"},
+]
+
+[[package]]
+name = "unix-ar"
+version = "0.2.1"
+requires_python = "~=3.6"
+summary = "AR file handling"
+groups = ["default"]
+files = [
+    {file = "unix_ar-0.2.1-py2.py3-none-any.whl", hash = "sha256:2acb718bc1308bf80e5b9da2614d8242cc2fe3be4cd8b2fd4719bce189aafcf1"},
+    {file = "unix_ar-0.2.1.tar.gz", hash = "sha256:bf9328ec70fa3a82f94dc26dc125264dbf62a2d8ffb1a3c8c8a8230175e72c4e"},
 ]
 
 [[package]]
