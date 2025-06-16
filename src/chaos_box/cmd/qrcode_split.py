@@ -17,7 +17,7 @@ from chaos_box.logging import setup_logger
 logger = setup_logger(__name__)
 
 
-def iter_file_path_into_chunks(
+def iter_file_into_chunks(
     file_path: Path, chunk_size: int
 ) -> Iterator[Tuple[bytes, int]]:
     with open(file_path, "rb") as f:
@@ -30,8 +30,9 @@ def iter_file_path_into_chunks(
             index += 1
 
 
-def generate_qr_code(data_info: Tuple[bytes, int, int, Path, str]) -> None:
-    chunk, index, total_count, output_dir, prefix = data_info
+def generate_qr_code(
+    chunk: bytes, index: int, total_chunks: int, output_dir: Path, prefix: str
+) -> None:
     qr = qrcode.QRCode(
         version=40,  # Version 40 is the largest, can store up to 2953 bytes in binary mode
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -50,7 +51,7 @@ def generate_qr_code(data_info: Tuple[bytes, int, int, Path, str]) -> None:
         font = ImageFont.truetype(font_path, 20)
     except Exception:
         font = ImageFont.load_default()
-    text = f"{index}/{total_count}"
+    text = f"{index}/{total_chunks}"
     textbbox = draw.textbbox((0, 0), text, font=font)
     textwidth = textbbox[2] - textbbox[0]
     textheight = textbbox[3] - textbbox[1]
@@ -60,7 +61,7 @@ def generate_qr_code(data_info: Tuple[bytes, int, int, Path, str]) -> None:
 
     draw.text((text_x, text_y), text, font=font, fill="black")
 
-    img_path = output_dir / f"{prefix}_{index:0{len(str(total_count))}d}.png"
+    img_path = output_dir / f"{prefix}_{index:0{len(str(total_chunks))}d}.png"
     img.save(img_path)
     logger.info("Saved QR code %s to %s", index, img_path)
 
@@ -151,26 +152,29 @@ def main():
     else:
         existing_indices = []
 
-    last_index = existing_indices[-1] if existing_indices else 0
+    last_index = existing_indices[-1] if len(existing_indices) > 0 else 0
 
     count = 0
     futures = []
     with ProcessPoolExecutor(max_workers=args.workers) as executor:
-        for chunk, index in iter_file_path_into_chunks(file_path, args.chunk_size):
+        for chunk, index in iter_file_into_chunks(file_path, args.chunk_size):
             if index <= last_index:
                 continue
 
             count += 1
             if count > args.limit:
                 break
-            data_info = (
-                chunk,
-                index,
-                total_chunks,
-                output_dir,
-                file_path.stem,
+
+            futures.append(
+                executor.submit(
+                    generate_qr_code,
+                    chunk,
+                    index,
+                    total_chunks,
+                    output_dir,
+                    file_path.stem,
+                )
             )
-            futures.append(executor.submit(generate_qr_code, data_info))
 
         for future in as_completed(futures):
             try:

@@ -68,7 +68,7 @@ def main():
             logger.warning("Skip file with unexpected name: %s", f)
             continue
 
-    if not qr_files:
+    if not len(qr_files) > 0:
         logger.error("No valid QR code images found in %s", directory)
         return
 
@@ -82,7 +82,7 @@ def main():
             if result is not None:
                 decoded_chunks.append(result)
 
-    if not decoded_chunks:
+    if not len(decoded_chunks) > 0:
         logger.error("No QR code could be decoded successfully.")
         return
 
