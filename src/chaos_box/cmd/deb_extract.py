@@ -6,7 +6,7 @@ import tarfile
 from pathlib import Path
 
 import argcomplete
-import unix_ar
+from debian import arfile
 
 from chaos_box.logging import setup_logger
 
@@ -24,36 +24,32 @@ class DebExtractor:
             return
 
         try:
-            # TypeError: 'ArFile' object does not support the context manager protocol
-            ar_file = unix_ar.open(deb_path)
-            self._extract_ar_members(ar_file, extract_dir)
+            with open(deb_path, "rb") as f:
+                ar_file = arfile.ArFile(fileobj=f)
+                self._extract_ar_members(ar_file, extract_dir)
             logger.info(
                 "Successfully extracted '%s' to '%s'", deb_path.name, extract_dir
             )
-            ar_file.close()
-        except (OSError, tarfile.TarError) as err:
+        except (OSError, arfile.ArError, tarfile.TarError) as err:
             shutil.rmtree(extract_dir, ignore_errors=True)
             logger.error("Failed to process '%s': '%s'", deb_path.name, err)
 
-    def _extract_ar_members(self, ar_file: unix_ar.ArFile, extract_dir: Path):
-        for ar_info in ar_file.infolist():
-            name = ar_info.name.decode()
-            if name.startswith("control.tar"):
-                self._extract_ar_member(ar_file, name, extract_dir / "control")
-            elif name.startswith("data.tar"):
-                self._extract_ar_member(ar_file, name, extract_dir / "data")
+    def _extract_ar_members(self, ar_file: arfile.ArFile, extract_dir: Path):
+        for member in ar_file.getmembers():
+            if member.name.startswith("control.tar"):
+                self._extract_ar_member(member, extract_dir / "control")
+            elif member.name.startswith("data.tar"):
+                self._extract_ar_member(member, extract_dir / "data")
 
-    def _extract_ar_member(self, ar_file: unix_ar.ArFile, name: str, extract_dir: Path):
-        if name.endswith(".tar.zst"):
-            logger.warning("Skip '%s', zstd is not implemented yet", name)
+    def _extract_ar_member(self, member: arfile.ArMember, extract_dir: Path):
+        if member.name.endswith(".tar.zst"):
+            logger.warning("Skipping '%s', zstd is not implemented yet", member.name)
             return
 
         extract_dir.mkdir(parents=True, exist_ok=True)
-        tarball = ar_file.open(name)
-        with tarfile.open(fileobj=tarball) as tar:
+        with tarfile.open(fileobj=member) as tar:
             tar.extractall(path=extract_dir)
-        logger.debug("Extracted '%s' to '%s'", name, extract_dir)
-        tarball.close()
+        logger.debug("Extracted '%s' to '%s'", member.name, extract_dir)
 
     def _remove_extracted(self, extract_dir: Path):
         if extract_dir.exists() and extract_dir.is_dir():
@@ -74,7 +70,7 @@ class DebExtractor:
     def run(self):
         deb_files = sorted(self.directory.glob("*.deb"))
         if not deb_files:
-            logger.warning("No .deb files found in current directory")
+            logger.warning("No .deb files found in '%s'", self.directory.resolve())
             return
 
         logger.info("Found %d .deb file(s) to process", len(deb_files))
