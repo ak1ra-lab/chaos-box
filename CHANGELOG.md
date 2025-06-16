@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2025-06-16
+
+### 🚜 Refactor
+
+- use unix-ar instead of debian.arfile (python3-debian) on deb_extract.py
+
+### 📚 Documentation
+
+- fixup README.md
+
+### ⚙️ Miscellaneous Tasks
+
+- bump version
+
 ## [0.3.0] - 2025-06-15
 
 ### 🚀 Features
