@@ -21,7 +21,7 @@ pipx install chaos-box \
 所有命令行工具都可以使用 `-h` 或 `--help` 查看帮助信息, 下面是简要说明,
 
 - archive-dirs: 列举当前目录下所有文件夹, 批量将文件夹创建为同名压缩档, 支持多种压缩档格式
-- archive-mobi: 一个将 vol.moe 下载的 mobi 漫画文件转换为多种压缩档格式的小工具, 很久没用了, 可能缺乏维护
+- archive-mobi: 将 vol.moe 下载的 mobi 漫画文件转换为多种压缩档格式, 可能缺乏维护
 - deb-extract: 列举当前目录下所有 `.deb` package 并解压到同名目录
 - merge-ip-ranges: 从标准输入或文件中读取 IP addresses 并对其合并与去重
 - netstats: 显示各网卡开机以来流量和 packet 计数, 可以使用 regex 过滤网卡名称
