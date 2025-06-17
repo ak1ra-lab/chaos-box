@@ -69,5 +69,33 @@ def iter_files_with_respect_gitignore(
         walk = path_walk
 
     for root_path, _, files in walk(directory):
-        for file in files:
-            yield root_path / file
+        for f in files:
+            yield root_path / f
+
+
+def iter_dirs_with_respect_gitignore(
+    directory: Path, respect_gitignore: bool = False
+) -> Iterator[Path]:
+    """Generator that yields all dirs in a directory recursively, with options."""
+    if respect_gitignore:
+        walk = path_walk_respect_gitignore
+    else:
+        walk = path_walk
+
+    for root_path, dirs, _ in walk(directory):
+        for d in dirs:
+            yield root_path / d
+
+
+def glob_respect_gitignore(directory: Path, glob: str = "*") -> Iterator[Path]:
+    specs = load_directory_gitignore_specs(directory)
+    for file in directory.glob(glob):
+        if not should_path_ignore(file, specs):
+            yield file
+
+
+def rglob_respect_gitignore(directory: Path, glob: str = "*") -> Iterator[Path]:
+    specs = load_directory_gitignore_specs(directory)
+    for file in directory.rglob(glob):
+        if not should_path_ignore(file, specs):
+            yield file
