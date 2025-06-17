@@ -8,31 +8,13 @@ from typing import List, Tuple
 
 import argcomplete
 
+from chaos_box.gitignore import rglob_respect_gitignore
 from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 
-# Supported file extensions
-SUPPORTED_EXTENSIONS = {".md", ".txt", ".png", ".pdf", ".drawio", ".canvas"}
 # Regex pattern for existing date prefixes
 DATE_PREFIX_REGEX = re.compile(r"^(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2})-)?")
-
-
-def find_files(directory: str) -> List[Path]:
-    """Find all supported files in the directory tree."""
-    directory_path = Path(directory).resolve()
-    files = []
-
-    for item in directory_path.rglob("*"):
-        if not (item.is_file() and item.suffix.lower() in SUPPORTED_EXTENSIONS):
-            continue
-        try:
-            files.append(item.relative_to(directory_path))
-        except ValueError:
-            logger.debug("Skipping file outside working directory: %s", item)
-            continue
-
-    return files
 
 
 def get_dest_filename(src_path: Path) -> Tuple[Path, bool]:
@@ -72,7 +54,18 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Rename files with last modified date prefix"
     )
-    parser.add_argument("directory", help="Directory containing files to process")
+    parser.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        help="Directory to process (default: current directory)",
+    )
+    parser.add_argument(
+        "-g",
+        "--glob",
+        default="*.md",
+        help="glob pattern for iter_files, default: '%(default)s'",
+    )
     parser.add_argument(
         "--apply",
         action="store_true",
@@ -87,15 +80,14 @@ def main() -> None:
     """Main function to process files in the given directory."""
     args = parse_args()
 
-    directory = args.directory
-    if not Path(directory).exists():
+    directory = Path(args.directory).resolve()
+    if not directory.exists():
         logger.error("Directory '%s' does not exist", directory)
         return
 
-    files = find_files(directory)
-    if not files:
-        logger.warning("No supported files found in '%s'", directory)
-        return
+    files = list(
+        f.relative_to(directory) for f in rglob_respect_gitignore(directory, args.glob)
+    )
 
     logger.info("Found %d files to process", len(files))
     if not args.apply:
