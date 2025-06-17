@@ -38,4 +38,4 @@ pipx install chaos-box \
 
 ## TODO
 
-- [ ] add zstd support on `deb-extract`
+- [x] add zstd support on `deb-extract`

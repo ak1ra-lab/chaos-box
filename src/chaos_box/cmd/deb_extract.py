@@ -9,6 +9,7 @@ import argcomplete
 from debian import arfile
 
 from chaos_box.logging import setup_logger
+from chaos_box.tarfile import TarFileZstd
 
 logger = setup_logger(__name__)
 
@@ -42,12 +43,8 @@ class DebExtractor:
                 self._extract_ar_member(member, extract_dir / "data")
 
     def _extract_ar_member(self, member: arfile.ArMember, extract_dir: Path):
-        if member.name.endswith(".tar.zst"):
-            logger.warning("Skipping '%s', zstd is not implemented yet", member.name)
-            return
-
         extract_dir.mkdir(parents=True, exist_ok=True)
-        with tarfile.open(fileobj=member) as tar:
+        with TarFileZstd.open(fileobj=member) as tar:
             tar.extractall(path=extract_dir)
         logger.debug("Extracted '%s' to '%s'", member.name, extract_dir)
 
