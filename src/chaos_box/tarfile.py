@@ -55,7 +55,7 @@ def ZstdTarReader(name, *, zstd_dict=None, level_or_option=None, **kwargs):
         with pyzstd.open(
             name, level_or_option=level_or_option, zstd_dict=zstd_dict
         ) as ifh:
-            shutil.copyfile(ifh, tmp_file)
+            shutil.copyfileobj(ifh, tmp_file)
         tmp_file.seek(0)
         with tarfile.TarFile(fileobj=tmp_file, **kwargs) as tar:
             yield tar
