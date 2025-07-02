@@ -74,6 +74,7 @@ Changelog = "https://github.com/ak1ra-lab/chaos-box/blob/master/CHANGELOG.md"
 
 
 [project.scripts]
+apt-lists = "chaos_box.cmd.apt_lists:main"
 deb-extract = "chaos_box.cmd.deb_extract:main"
 archive-dirs = "chaos_box.cmd.archive_dirs:main"
 merge-ip-ranges = "chaos_box.cmd.merge_ip_ranges:main"
