@@ -20,6 +20,7 @@ dependencies = [
     "pyzbar>=0.1.9",
     "pyzstd>=0.17.0",
     "qrcode>=8.2",
+    "chardet>=5.2.0",
 ]
 requires-python = ">=3.11"
 classifiers = [
@@ -85,6 +86,7 @@ rotate-images = "chaos_box.cmd.rotate_images:main"
 shasum-list = "chaos_box.cmd.shasum_list:main"
 sort-keys = "chaos_box.cmd.sort_keys:main"
 urlencode = "chaos_box.cmd.urlencode:main"
+iconv-utf8 ="chaos_box.cmd.iconv_utf8:main"
 
 [build-system]
 requires = ["pdm-backend"]
