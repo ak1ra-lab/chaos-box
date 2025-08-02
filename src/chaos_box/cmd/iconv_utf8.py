@@ -21,6 +21,10 @@ def detect_encoding(file_path: Path, num_bytes: int = 4096) -> str:
 
 def convert_to_utf8(input_path: Path, dry_run: bool):
     encoding = detect_encoding(input_path)
+    if encoding.lower() in ("utf-8", "utf8"):
+        logger.info("[SKIP   ] %s is already UTF-8 encoded", input_path)
+        return
+
     output_path = input_path.with_stem(input_path.stem + "-utf8")
     if not encoding:
         logger.warning("Failed to detect encoding for %s", input_path)
@@ -28,7 +32,7 @@ def convert_to_utf8(input_path: Path, dry_run: bool):
 
     if dry_run:
         logger.info(
-            "[DRY RUN] %s (%s) → %s", input_path, encoding, output_path
+            "[DRY RUN] %s (%s)\n        → %s", input_path, encoding, output_path
         )
         return
 
@@ -43,32 +47,34 @@ def convert_to_utf8(input_path: Path, dry_run: bool):
                 if not chunk:
                     break
                 dest.write(chunk)
-        logger.info("[OK] %s (%s) → %s", input_path, encoding, output_path)
+        logger.info(
+            "[OK     ] %s (%s)\n        → %s", input_path, encoding, output_path
+        )
     except Exception as err:
-        logger.error("[FAIL] %s (%s): %s", input_path, encoding, err)
+        logger.error("[FAIL   ] %s (%s): %s", input_path, encoding, err)
 
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="perform a dry run without writing files",
+    )
+    parser.add_argument(
         "-r",
         "--root",
         type=Path,
         default=Path("."),
-        help="Root directory for rglob, default: current directory",
+        help="root directory for rglob, default is current directory",
     )
     parser.add_argument(
         "-g",
         "--glob",
         type=str,
         default="*.chs.srt",
-        help="Glob pattern for input files, default: '%(default)s'",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Perform a dry run without writing files",
+        help="glob pattern for input files, default is '%(default)s'",
     )
 
     argcomplete.autocomplete(parser)
