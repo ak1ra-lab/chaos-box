@@ -19,13 +19,12 @@ def detect_encoding(file_path: Path, num_bytes: int = 4096) -> str:
     return result.get("encoding")
 
 
-def convert_to_utf8(input_path: Path, dry_run: bool):
+def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool):
     encoding = detect_encoding(input_path)
     if encoding.lower() in ("utf-8", "utf8"):
         logger.info("[SKIP   ] %s is already UTF-8 encoded", input_path)
         return
 
-    output_path = input_path.with_stem(input_path.stem + "-utf8")
     if not encoding:
         logger.warning("Failed to detect encoding for %s", input_path)
         return
@@ -35,6 +34,9 @@ def convert_to_utf8(input_path: Path, dry_run: bool):
             "[DRY RUN] %s (%s)\n        → %s", input_path, encoding, output_path
         )
         return
+
+    if not output_path.parent.exists():
+        output_path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
         chunk_size = 1024 * 1024  # 1MB
@@ -58,11 +60,6 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="perform a dry run without writing files",
-    )
-    parser.add_argument(
         "-r",
         "--root",
         type=Path,
@@ -76,13 +73,28 @@ def main():
         default="*.chs.srt",
         help="glob pattern for input files, default is '%(default)s'",
     )
+    parser.add_argument(
+        "-O",
+        "--output-dir",
+        type=Path,
+        help="output directory for converted files, default is the same directory as input files",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="perform a dry run without writing files",
+    )
 
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
     root = args.root.expanduser()
+    output_dir = Path(args.output_dir).expanduser() if args.output_dir else None
     for input_path in root.rglob(args.glob):
-        convert_to_utf8(input_path, args.dry_run)
+        output_path = input_path.with_stem(input_path.stem + "-utf8")
+        if output_dir:
+            output_path = output_dir / output_path.relative_to(root)
+        convert_to_utf8(input_path, output_path, args.dry_run)
 
 
 if __name__ == "__main__":
