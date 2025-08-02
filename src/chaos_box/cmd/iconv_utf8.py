@@ -11,6 +11,10 @@ from chaos_box.logging import setup_logger
 logger = setup_logger(__name__)
 
 
+skipped_files = set()
+failed_files = set()
+
+
 def detect_encoding(file_path: Path, num_bytes: int = 4096) -> str:
     with open(file_path, "rb") as f:
         raw_data = f.read(num_bytes)
@@ -19,9 +23,10 @@ def detect_encoding(file_path: Path, num_bytes: int = 4096) -> str:
     return result.get("encoding")
 
 
-def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool):
+def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool, force: bool):
     encoding = detect_encoding(input_path)
     if encoding.lower() in ("utf-8", "utf8"):
+        skipped_files.add(input_path)
         logger.info("[SKIP   ] %s is already UTF-8 encoded", input_path)
         return
 
@@ -32,6 +37,13 @@ def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool):
     if dry_run:
         logger.info(
             "[DRY RUN] %s (%s)\n        → %s", input_path, encoding, output_path
+        )
+        return
+
+    if output_path.exists() and not force:
+        logger.warning(
+            "[SKIP   ] Output file %s already exists. Use --force to overwrite.",
+            output_path,
         )
         return
 
@@ -53,6 +65,7 @@ def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool):
             "[OK     ] %s (%s)\n        → %s", input_path, encoding, output_path
         )
     except Exception as err:
+        failed_files.add(input_path)
         logger.error("[FAIL   ] %s (%s): %s", input_path, encoding, err)
 
 
@@ -84,6 +97,11 @@ def main():
         action="store_true",
         help="perform a dry run without writing files",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="force overwrite of existing output files",
+    )
 
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
@@ -94,7 +112,20 @@ def main():
         output_path = input_path.with_stem(input_path.stem + "-utf8")
         if output_dir:
             output_path = output_dir / output_path.relative_to(root)
-        convert_to_utf8(input_path, output_path, args.dry_run)
+        convert_to_utf8(input_path, output_path, args.dry_run, args.force)
+
+    if len(skipped_files) > 0:
+        logger.info(
+            "Skipped %d files that are already UTF-8 encoded:\n    %s",
+            len(skipped_files),
+            "\n    ".join(str(f) for f in skipped_files),
+        )
+    if len(failed_files) > 0:
+        logger.error(
+            "Failed to convert %d files:\n    %s",
+            len(failed_files),
+            "\n    ".join(str(f) for f in failed_files),
+        )
 
 
 if __name__ == "__main__":
