@@ -6,6 +6,7 @@ from pathlib import Path
 import argcomplete
 import chardet
 
+from chaos_box.gitignore import rglob_respect_gitignore
 from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -69,49 +70,60 @@ def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool, force: b
         logger.error("[FAIL   ] %s (%s): %s", input_path, encoding, err)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-
+def parse_args():
+    parser = argparse.ArgumentParser(description="convert text files to UTF-8 encoding")
     parser.add_argument(
-        "-r",
         "--root",
         type=Path,
         default=Path("."),
         help="root directory for rglob, default is current directory",
     )
     parser.add_argument(
-        "-g",
         "--glob",
         type=str,
         default="*.chs.srt",
         help="glob pattern for input files, default is '%(default)s'",
     )
     parser.add_argument(
-        "-O",
+        "--gitignore",
+        action="store_true",
+        help="respect .gitignore files when searching for input files",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         help="output directory for converted files, default is the same directory as input files",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="perform a dry run without writing files",
     )
     parser.add_argument(
         "--force",
         action="store_true",
         help="force overwrite of existing output files",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="perform a dry run without writing files",
+    )
 
     argcomplete.autocomplete(parser)
-    args = parser.parse_args()
+    return parser.parse_args()
 
-    root = args.root.expanduser()
+
+def main():
+    args = parse_args()
+    root = Path(args.root).expanduser()
     output_dir = Path(args.output_dir).expanduser() if args.output_dir else None
-    for input_path in root.rglob(args.glob):
+
+    if args.gitignore:
+        input_files = rglob_respect_gitignore(root, args.glob)
+    else:
+        input_files = root.rglob(args.glob)
+
+    for input_path in input_files:
         output_path = input_path.with_stem(input_path.stem + "-utf8")
         if output_dir:
             output_path = output_dir / output_path.relative_to(root)
+
         convert_to_utf8(input_path, output_path, args.dry_run, args.force)
 
     if len(skipped_files) > 0:
