@@ -5,10 +5,7 @@ import json
 
 import argcomplete
 
-
-def save_json(filename: str, data: dict) -> None:
-    with open(filename, "w", encoding="utf-8") as f:
-        f.write(json.dumps(data, ensure_ascii=False, indent=4, sort_keys=True))
+from chaos_box.utils import save_json
 
 
 def sort_keys(filenames: list) -> None:

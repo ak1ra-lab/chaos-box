@@ -4,24 +4,16 @@ import argparse
 from pathlib import Path
 
 import argcomplete
-import chardet
 
 from chaos_box.gitignore import rglob_respect_gitignore
 from chaos_box.logging import setup_logger
+from chaos_box.utils import detect_encoding
 
 logger = setup_logger(__name__)
 
 
 skipped_files = set()
 failed_files = set()
-
-
-def detect_encoding(file_path: Path, num_bytes: int = 4096) -> str:
-    with open(file_path, "rb") as f:
-        raw_data = f.read(num_bytes)
-    result = chardet.detect(raw_data)
-    logger.debug("Detected encoding for %s: %s", file_path, result)
-    return result.get("encoding")
 
 
 def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool, force: bool):
