@@ -90,14 +90,11 @@ urlencode = "chaos_box.cmd.urlencode:main"
 iconv-utf8 ="chaos_box.cmd.iconv_utf8:main"
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.pdm]
-distribution = true
-
-[tool.pdm.version]
-source = "scm"
+[tool.hatch.version]
+source = "vcs"
 
 [dependency-groups]
 tests = ["pytest>=8.3.4", "pytest-cov>=6.0.0"]
