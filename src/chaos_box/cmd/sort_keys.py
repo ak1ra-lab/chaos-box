@@ -4,8 +4,7 @@ import argparse
 import json
 
 import argcomplete
-
-from chaos_box.utils import save_json
+from chaos_utils.text_utils import save_json
 
 
 def sort_keys(filenames: list) -> None:

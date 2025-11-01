@@ -6,10 +6,9 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 import argcomplete
+from chaos_utils.logging import setup_logger
 from PIL import Image
 from pyzbar.pyzbar import decode
-
-from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

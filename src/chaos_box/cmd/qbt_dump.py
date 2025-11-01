@@ -6,9 +6,8 @@ from pathlib import Path
 from typing import Dict, List
 
 import argcomplete
+from chaos_utils.logging import setup_logger
 from fastbencode import bdecode
-
-from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

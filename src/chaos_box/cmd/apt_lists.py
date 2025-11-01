@@ -5,8 +5,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import argcomplete
-
-from chaos_box.logging import setup_logger
+from chaos_utils.logging import setup_logger
 
 logger = setup_logger(__name__)
 

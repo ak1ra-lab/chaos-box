@@ -10,9 +10,8 @@ from typing import Iterator, List, Tuple
 
 import argcomplete
 import qrcode
+from chaos_utils.logging import setup_logger
 from PIL import ImageDraw, ImageFont
-
-from chaos_box.logging import setup_logger
 
 logger = setup_logger(__name__)
 

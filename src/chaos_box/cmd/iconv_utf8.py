@@ -4,10 +4,9 @@ import argparse
 from pathlib import Path
 
 import argcomplete
-
-from chaos_box.gitignore import rglob_respect_gitignore
-from chaos_box.logging import setup_logger
-from chaos_box.utils import detect_encoding
+from chaos_utils.gitignore import rglob_respect_gitignore
+from chaos_utils.logging import setup_logger
+from chaos_utils.text_utils import detect_encoding
 
 logger = setup_logger(__name__)
 

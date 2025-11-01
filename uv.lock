@@ -206,21 +206,19 @@ name = "chaos-box"
 source = { editable = "." }
 dependencies = [
     { name = "argcomplete" },
-    { name = "chardet" },
+    { name = "chaos-utils" },
     { name = "fastbencode" },
     { name = "httpx" },
     { name = "mobi" },
     { name = "netaddr" },
     { name = "numpy" },
     { name = "opencv-python-headless" },
-    { name = "pathspec" },
     { name = "pillow" },
     { name = "psutil" },
     { name = "py7zr" },
     { name = "pypng" },
     { name = "python-debian" },
     { name = "pyzbar" },
-    { name = "pyzstd" },
     { name = "qrcode" },
 ]
 
@@ -243,21 +241,19 @@ tests = [
 [package.metadata]
 requires-dist = [
     { name = "argcomplete", specifier = ">=3.6.2" },
-    { name = "chardet", specifier = ">=5.2.0" },
+    { name = "chaos-utils", specifier = ">=0.1.0" },
     { name = "fastbencode", specifier = ">=0.3.2" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "mobi", specifier = ">=0.3.3" },
     { name = "netaddr", specifier = ">=1.3.0" },
     { name = "numpy", specifier = ">=2.3.0" },
     { name = "opencv-python-headless", specifier = ">=4.11.0.86" },
-    { name = "pathspec", specifier = ">=0.12.1" },
     { name = "pillow", specifier = ">=11.2.1" },
     { name = "psutil", specifier = ">=7.0.0" },
     { name = "py7zr", specifier = ">=1.0.0" },
     { name = "pypng", specifier = ">=0.20220715.0" },
     { name = "python-debian", specifier = ">=1.0.1" },
     { name = "pyzbar", specifier = ">=0.1.9" },
-    { name = "pyzstd", specifier = ">=0.17.0" },
     { name = "qrcode", specifier = ">=8.2" },
 ]
 
@@ -273,6 +269,20 @@ lint = [{ name = "ruff", specifier = ">=0.9.4" }]
 tests = [
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "pytest-cov", specifier = ">=6.0.0" },
+]
+
+[[package]]
+name = "chaos-utils"
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "chardet" },
+    { name = "pathspec" },
+    { name = "pyzstd" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/21/bb/5081e6a481f5aaa603f81b61704f456e7d69cbdc311f9e379de0a93c0612/chaos_utils-0.1.1.tar.gz", hash = "sha256:b6c6e4c05c95b633d91f77f8fd1a59601bbd52980934fa1f57a124920bd61ae0", size = 43994, upload-time = "2025-11-01T09:31:00.03Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/17/f3/b736d9fd4e51a52ec90b4f38a5ac10ce09cfa71839952082cdaaddc3ee6d/chaos_utils-0.1.1-py3-none-any.whl", hash = "sha256:456c3c4cd7232f3499b84674ddb67246e6a2cb4d9642e9ba494c4b2bce9ec6bd", size = 6510, upload-time = "2025-11-01T09:30:58.374Z" },
 ]
 
 [[package]]

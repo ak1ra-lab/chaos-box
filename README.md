@@ -35,7 +35,3 @@ pipx install chaos-box \
 - shasum-list: 计算特定目录下所有文件的 hexdigest 并保存到文件中, 支持忽略 .gitignore
 - sort-keys: 读取 .json 文件后对 dict 执行 `sort_keys` 后保存
 - urlencode: 从标准输入或文件中读取文本并进行 urlencode
-
-## TODO
-
-- [x] add zstd support on `deb-extract`

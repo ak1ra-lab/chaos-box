@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.0] - 2025-11-01
+
+### 🚀 Features
+
+- impl TarFileZstd on tarfile.py
+- impl .zst support on deb_extract.py
+- impl apt_lists.py
+- impl iconv-utf8 cmd
+- impl --gitignore option on iconv-utf8
+- impl src/chaos_box/cmd/prime.py
+- impl src/chaos_box/utils.py
+
+### 🚜 Refactor
+
+- remove logging_config and impl JsonFormatter
+
+### 🧪 Testing
+
+- impl test cases on gitignore.py
+- impl test cases on tarfile.py
+- enable tests session on noxfile.py
+
+### ⚙️ Miscellaneous Tasks
+
+- fixup README.md
+- fixup qrcode_split.py
+- impl helper func on gitignore.py
+- impl respect gitignore on rename_with_date.py
+- enrich classifiers and keywords
+- remove exec mode on cmd/qbt_*.py
+- impl sorted_repo_stats on apt_lists.py
+- toml format on pyproject.toml
+- skip utf-8 encoded files
+- impl output_dir on iconv-utf8
+- impl skipped_files and --force option on iconv-utf8
+- convert logfile to bool on setup_logger
+- update deep_merge on utils.py
+- update .gitignore
+- migrate pdm to uv
+- migrate utils into chaos-utils
+
 ## [0.3.2] - 2025-06-16
 
 ### 🚜 Refactor

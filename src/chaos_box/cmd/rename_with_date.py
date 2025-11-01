@@ -7,9 +7,8 @@ from pathlib import Path
 from typing import List, Tuple
 
 import argcomplete
-
-from chaos_box.gitignore import rglob_respect_gitignore
-from chaos_box.logging import setup_logger
+from chaos_utils.gitignore import rglob_respect_gitignore
+from chaos_utils.logging import setup_logger
 
 logger = setup_logger(__name__)
 

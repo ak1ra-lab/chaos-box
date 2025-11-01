@@ -6,10 +6,9 @@ import tarfile
 from pathlib import Path
 
 import argcomplete
+from chaos_utils.logging import setup_logger
+from chaos_utils.tarfile import TarFileZstd
 from debian import arfile
-
-from chaos_box.logging import setup_logger
-from chaos_box.tarfile import TarFileZstd
 
 logger = setup_logger(__name__)
 
