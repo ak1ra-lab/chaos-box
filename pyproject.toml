@@ -18,6 +18,7 @@ dependencies = [
     "pypng>=0.20220715.0",
     "python-debian>=1.0.1",
     "pyzbar>=0.1.9",
+    "qbittorrent-api>=2025.7.0",
     "qrcode>=8.2",
 ]
 requires-python = ">=3.11"
