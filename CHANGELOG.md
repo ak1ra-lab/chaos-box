@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.0] - 2025-11-07
+
+### 🚀 Features
+
+- impl qbt_tracker.py with qbittorrent-api
+
+### 📚 Documentation
+
+- impl docstrings on all cmd
+- update README.md
+
+### ⚙️ Miscellaneous Tasks
+
+- fix uv build on test-pypi
+- fix and improvement
+- impl AGENTS.md
+- uv sync -U
+- add mypy type checker
+- give up directory glob on date-rename
+- give up directory glob on iconv8
+- rename some commands
+- uv add qbittorrent-api
+- bump version
+
 ## [0.4.0] - 2025-11-01
 
 ### 🚀 Features
