@@ -30,6 +30,7 @@ uv tool install chaos-box \
 - `ipmerge`: 合并并去重输入文件或标准输入中的 IP 地址段, 支持二进制/补零输出.
 - `qbt-dump`: 导出 `.torrent` 和 qBittorrent `.fastresume` 文件内容为 JSON 格式.
 - `qbt-migrate`: 批量迁移 qBittorrent BT_backup 目录中的 save_path 和 qBt-category, 支持条件过滤和 dry-run.
+- `qbt-tracker`: 批量修改 qBittorrent 中 tracker urls, 支持 glob/regex 过滤 torrent.name, regex 替换 tracker urls.
 - `qrcode-merge`: 将由 `qrcode-split` 拆分的 QR code 图片合并还原为原文件, 支持并行处理.
 - `qrcode-split`: 将任意文本或二进制文件拆分为一系列 QR code 图片, 支持断点续传和并行处理.
 - `rotate-images`: 批量生成旋转头像动画 (GIF/MP4), 支持方向, 帧率, 裁剪等参数.

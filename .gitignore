@@ -327,3 +327,4 @@ __marimo__/
 # General configuration file and examples folder
 examples/*
 config/*
+!config/qbt_tracker.example.toml
