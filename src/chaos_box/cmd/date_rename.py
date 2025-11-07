@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import List, Tuple
 
 import argcomplete
-from chaos_utils.gitignore import rglob_respect_gitignore
 from chaos_utils.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -47,12 +46,16 @@ def process_files(files: List[Path], apply: bool = False) -> None:
         apply: Whether to actually rename files
     """
     for src in files:
+        if not src.exists():
+            logger.error("File '%s' does not exist", src)
+            continue
+
         dest, should_rename = get_dest_filename(src)
         if not should_rename:
             continue
 
         if not apply:
-            logger.info("src:  %s\ndest: %s\n", src, dest)
+            logger.info("[DRY-RUN] src:  %s\n          dest: %s\n", src, dest)
             continue
 
         try:
@@ -68,16 +71,11 @@ def parse_args() -> argparse.Namespace:
         description="Rename files with last modified date prefix"
     )
     parser.add_argument(
-        "directory",
-        nargs="?",
-        default=".",
-        help="Directory to process (default: current directory)",
-    )
-    parser.add_argument(
-        "-g",
-        "--glob",
-        default="*.md",
-        help="glob pattern for iter_files, default: '%(default)s'",
+        "files",
+        nargs="+",
+        type=Path,
+        metavar="FILE",
+        help="Files to process",
     )
     parser.add_argument(
         "--apply",
@@ -90,23 +88,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Main function to process files in the given directory."""
+    """Main function to process files."""
     args = parse_args()
 
-    directory = Path(args.directory).resolve()
-    if not directory.exists():
-        logger.error("Directory '%s' does not exist", directory)
-        return
-
-    files = list(
-        f.relative_to(directory) for f in rglob_respect_gitignore(directory, args.glob)
-    )
-
-    logger.info("Found %d files to process", len(files))
+    logger.info("Found %d files to process", len(args.files))
     if not args.apply:
         logger.info("Running in dry-run mode - no changes will be made")
 
-    process_files(files, args.apply)
+    process_files(args.files, args.apply)
     logger.info("Processing complete")
 
 
