@@ -73,7 +73,7 @@ apt-lists = "chaos_box.cmd.apt_lists:main"
 date-rename = "chaos_box.cmd.date_rename:main"
 deb-extract = "chaos_box.cmd.deb_extract:main"
 archive-dirs = "chaos_box.cmd.archive_dirs:main"
-merge-ip-ranges = "chaos_box.cmd.merge_ip_ranges:main"
+iconv8 = "chaos_box.cmd.iconv8:main"
 netstats = "chaos_box.cmd.netstats:main"
 pconv = "chaos_box.cmd.pconv:main"
 qbt-dump = "chaos_box.cmd.qbt_dump:main"
@@ -83,7 +83,6 @@ qrcode-split = "chaos_box.cmd.qrcode_split:main"
 rotate-images = "chaos_box.cmd.rotate_images:main"
 shasum-list = "chaos_box.cmd.shasum_list:main"
 urlencode = "chaos_box.cmd.urlencode:main"
-iconv-utf8 = "chaos_box.cmd.iconv_utf8:main"
 
 [build-system]
 requires = ["hatchling", "hatch-vcs"]

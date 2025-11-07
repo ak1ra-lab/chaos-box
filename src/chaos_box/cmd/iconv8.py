@@ -6,7 +6,6 @@ import argparse
 from pathlib import Path
 
 import argcomplete
-from chaos_utils.gitignore import rglob_respect_gitignore
 from chaos_utils.logging import setup_logger
 from chaos_utils.text_utils import detect_encoding
 
@@ -18,14 +17,14 @@ failed_files = set()
 
 
 def convert_to_utf8(
-    input_path: Path, output_path: Path, dry_run: bool, force: bool
+    input_path: Path, output_path: Path, apply: bool = False, force: bool = False
 ) -> None:
     """Convert a text file to UTF-8 encoding.
 
     Args:
         input_path: Path to input file
         output_path: Path to write output
-        dry_run: If True, only show what would be done
+        apply: Whether to actually perform the conversion
         force: If True, overwrite existing files
     """
     encoding = detect_encoding(input_path)
@@ -38,9 +37,9 @@ def convert_to_utf8(
         logger.warning("Failed to detect encoding for %s", input_path)
         return
 
-    if dry_run:
+    if not apply:
         logger.info(
-            "[DRY RUN] %s (%s)\n        → %s", input_path, encoding, output_path
+            "[DRY-RUN] %s (%s)\n          → %s", input_path, encoding, output_path
         )
         return
 
@@ -66,7 +65,7 @@ def convert_to_utf8(
                     break
                 dest.write(chunk)
         logger.info(
-            "[OK     ] %s (%s)\n        → %s", input_path, encoding, output_path
+            "[OK     ] %s (%s)\n          → %s", input_path, encoding, output_path
         )
     except Exception as err:
         failed_files.add(input_path)
@@ -79,26 +78,16 @@ def parse_args() -> argparse.Namespace:
     Returns:
         Parsed command line arguments
     """
-    parser = argparse.ArgumentParser(description="convert text files to UTF-8 encoding")
+    parser = argparse.ArgumentParser(description="Convert text files to UTF-8 encoding")
     parser.add_argument(
-        "--root",
+        "files",
+        nargs="+",
         type=Path,
-        default=Path("."),
-        help="root directory for rglob, default is current directory",
+        metavar="FILE",
+        help="Files to convert",
     )
     parser.add_argument(
-        "--glob",
-        type=str,
-        default="*.chs.srt",
-        help="glob pattern for input files, default is '%(default)s'",
-    )
-    parser.add_argument(
-        "--gitignore",
-        action="store_true",
-        help="respect .gitignore files when searching for input files",
-    )
-    parser.add_argument(
-        "--output-dir",
+        "--output",
         type=Path,
         help="output directory for converted files, default is the same directory as input files",
     )
@@ -108,9 +97,9 @@ def parse_args() -> argparse.Namespace:
         help="force overwrite of existing output files",
     )
     parser.add_argument(
-        "--dry-run",
+        "--apply",
         action="store_true",
-        help="perform a dry run without writing files",
+        help="Actually perform the conversion (default is dry-run)",
     )
 
     argcomplete.autocomplete(parser)
@@ -120,28 +109,31 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     """Main function to process files and convert encodings."""
     args = parse_args()
-    root = Path(args.root).expanduser()
-    output_dir = Path(args.output_dir).expanduser() if args.output_dir else None
+    output_dir = Path(args.output).expanduser() if args.output else None
 
-    if args.gitignore:
-        input_files = rglob_respect_gitignore(root, args.glob)
-    else:
-        input_files = root.rglob(args.glob)
+    logger.info("Found %d files to process", len(args.files))
+    if not args.apply:
+        logger.info("Running in dry-run mode - no changes will be made")
 
-    for input_path in input_files:
+    for file in args.files:
+        input_path = Path(file).expanduser()
+        if not input_path.exists():
+            logger.error("File '%s' does not exist", input_path)
+            continue
+
         output_path = input_path.with_stem(input_path.stem + "-utf8")
         if output_dir:
-            output_path = output_dir / output_path.relative_to(root)
+            output_path = output_dir / input_path.name
 
-        convert_to_utf8(input_path, output_path, args.dry_run, args.force)
+        convert_to_utf8(input_path, output_path, args.apply, args.force)
 
-    if len(skipped_files) > 0:
+    if skipped_files:
         logger.info(
             "Skipped %d files that are already UTF-8 encoded:\n    %s",
             len(skipped_files),
             "\n    ".join(str(f) for f in skipped_files),
         )
-    if len(failed_files) > 0:
+    if failed_files:
         logger.error(
             "Failed to convert %d files:\n    %s",
             len(failed_files),
