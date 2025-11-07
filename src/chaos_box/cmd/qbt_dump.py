@@ -1,9 +1,11 @@
+"""Dump contents of qBittorrent torrent and fastresume files."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
 import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import argcomplete
 from chaos_utils.logging import setup_logger
@@ -12,7 +14,17 @@ from fastbencode import bdecode
 logger = setup_logger(__name__)
 
 
-def decode_torrent_data_files(torrent_data: dict):
+def decode_torrent_data_files(
+    torrent_data: Dict[bytes, Union[bytes, Dict, List]],
+) -> List[Dict[str, Union[int, str]]]:
+    """Decode file information from torrent data.
+
+    Args:
+        torrent_data: Decoded torrent data
+
+    Returns:
+        List of dictionaries containing file information
+    """
     info = torrent_data.get(b"info", {})
     files = info.get(b"files")
     if files is not None:
@@ -34,7 +46,15 @@ def decode_torrent_data_files(torrent_data: dict):
         ]
 
 
-def bytes_to_str(obj: Dict | List | bytes) -> Dict | List | str:
+def bytes_to_str(obj: Union[Dict, List, bytes]) -> Union[Dict, List, str]:
+    """Convert bytes objects to strings recursively.
+
+    Args:
+        obj: Object to convert
+
+    Returns:
+        Converted object with bytes decoded to strings
+    """
     if isinstance(obj, dict):
         return {bytes_to_str(k): bytes_to_str(v) for k, v in obj.items()}
     elif isinstance(obj, list):
@@ -73,6 +93,11 @@ def fastresume_dump(fastresume_data: dict, file_path: Path):
 
 
 def qbt_dump(torrent_file: Path) -> None:
+    """Dump contents of a torrent or fastresume file.
+
+    Args:
+        torrent_file: Path to torrent or fastresume file
+    """
     try:
         with open(torrent_file, "rb") as f:
             torrent_data = bdecode(f.read())

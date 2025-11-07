@@ -1,3 +1,9 @@
+"""Split files into QR code images for fun.
+
+This module provides functionality to split any file into a series of QR codes,
+supporting parallel processing and resumable operations.
+"""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -19,6 +25,15 @@ logger = setup_logger(__name__)
 def iter_file_into_chunks(
     file_path: Path, chunk_size: int
 ) -> Iterator[Tuple[bytes, int]]:
+    """Read a file in chunks and yield each chunk with its index.
+
+    Args:
+        file_path: Path to the input file
+        chunk_size: Size of each chunk in bytes
+
+    Yields:
+        Tuples of (chunk_data, chunk_index)
+    """
     with open(file_path, "rb") as f:
         index = 1
         while True:
@@ -32,6 +47,15 @@ def iter_file_into_chunks(
 def generate_qr_code(
     chunk: bytes, index: int, total_chunks: int, output_dir: Path, prefix: str
 ) -> None:
+    """Generate a QR code image for a chunk of data.
+
+    Args:
+        chunk: Binary data to encode
+        index: Index number of this chunk
+        total_chunks: Total number of chunks
+        output_dir: Directory to save the QR code image
+        prefix: Prefix for the output filename
+    """
     qr = qrcode.QRCode(
         version=40,  # Version 40 is the largest, can store up to 2953 bytes in binary mode
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -66,6 +90,15 @@ def generate_qr_code(
 
 
 def get_existing_indices(output_dir: Path, prefix: str) -> List[int]:
+    """Get list of existing QR code indices in the output directory.
+
+    Args:
+        output_dir: Directory containing QR code images
+        prefix: Filename prefix to match
+
+    Returns:
+        Sorted list of existing chunk indices
+    """
     existing_files = output_dir.glob("*.png")
     indices = []
     for file in existing_files:
@@ -79,6 +112,11 @@ def get_existing_indices(output_dir: Path, prefix: str) -> List[int]:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        Parsed command line arguments
+    """
     parser = argparse.ArgumentParser(
         description="Split a file into a series of QR code images."
     )
@@ -127,7 +165,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Main function to split a file into QR code images."""
     args = parse_args()
 
     file_path = Path(args.file)

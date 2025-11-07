@@ -1,3 +1,5 @@
+"""Archive all directories in a target directory using various compression formats."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -12,8 +14,12 @@ logger = setup_logger(__name__)
 
 
 def archive_dir(dir_path: Path, format: str, dry_run: bool = False) -> None:
-    """
-    Create an archive file (eg. zip or tar).
+    """Create an archive file from a directory.
+
+    Args:
+        dir_path: Path to the directory to archive
+        format: Archive format to use (e.g. zip, tar, 7z)
+        dry_run: If True, only show what would be done
     """
     archive_base = dir_path.parent / dir_path.name
     shutil.make_archive(
@@ -23,7 +29,14 @@ def archive_dir(dir_path: Path, format: str, dry_run: bool = False) -> None:
 
 
 def archive_dirs_mp(directory: Path, format: str, dry_run: bool, workers: int) -> None:
-    """Archive all directories in the current directory."""
+    """Archive all directories in parallel using multiple processes.
+
+    Args:
+        directory: Path containing directories to archive
+        format: Archive format to use
+        dry_run: If True, only show what would be done
+        workers: Number of parallel worker processes
+    """
     # List directories in the current directory, excluding hidden ones like .git
     dirs = [d for d in directory.iterdir() if d.is_dir() and not d.name.startswith(".")]
 
@@ -39,6 +52,11 @@ def archive_dirs_mp(directory: Path, format: str, dry_run: bool, workers: int) -
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        Parsed command line arguments
+    """
     parser = argparse.ArgumentParser(
         description="Archive directories in the current directory."
     )

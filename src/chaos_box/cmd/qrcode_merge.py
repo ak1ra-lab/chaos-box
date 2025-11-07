@@ -1,9 +1,16 @@
+"""Merge QR code images back into the original file.
+
+This module provides functionality to decode a series of QR code images
+and merge their contents back into the original file, supporting parallel processing.
+"""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
 import base64
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
+from typing import Optional, Tuple
 
 import argcomplete
 from chaos_utils.logging import setup_logger
@@ -13,7 +20,15 @@ from pyzbar.pyzbar import decode
 logger = setup_logger(__name__)
 
 
-def decode_qr_code(file_path: Path) -> tuple[int, str] | None:
+def decode_qr_code(file_path: Path) -> Optional[Tuple[int, str]]:
+    """Decode a QR code image file and extract its data.
+
+    Args:
+        file_path: Path to the QR code image file
+
+    Returns:
+        Tuple of (index, decoded_data) if successful, None otherwise
+    """
     try:
         img = Image.open(file_path)
         decoded_objects = decode(img)
@@ -29,6 +44,11 @@ def decode_qr_code(file_path: Path) -> tuple[int, str] | None:
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        Parsed command line arguments
+    """
     parser = argparse.ArgumentParser(
         description="Merge a directory of QR code images back into the original file."
     )
@@ -50,7 +70,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Main function to merge QR code images back into a single file."""
     args = parse_args()
 
     directory = Path(args.directory)

@@ -1,7 +1,10 @@
+"""Create rotating animations from images as GIF or MP4."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
 from pathlib import Path
+from typing import List
 
 import argcomplete
 import cv2
@@ -13,6 +16,15 @@ logger = setup_logger(__name__)
 
 
 def gen_circle_mask(im: Image.Image, upscale: int = 3) -> Image.Image:
+    """Generate a circular mask for the image.
+
+    Args:
+        im: Input image
+        upscale: Upscale factor for mask generation
+
+    Returns:
+        Circular mask image
+    """
     # ref: https://stackoverflow.com/a/22336005
     size = (im.size[0] * upscale, im.size[1] * upscale)
     mask = Image.new("L", size, 0)
@@ -26,7 +38,17 @@ def gen_circle_mask(im: Image.Image, upscale: int = 3) -> Image.Image:
 
 def gen_rotated_frames(
     im: Image.Image, step: int = 45, trim: bool = False
-) -> list[Image.Image]:
+) -> List[Image.Image]:
+    """Generate frames of rotated images.
+
+    Args:
+        im: Input image
+        step: Rotation step in degrees
+        trim: Whether to trim background
+
+    Returns:
+        List of rotated image frames
+    """
     mask = gen_circle_mask(im)
     mask_invert = ImageOps.invert(mask)
     circle = im.copy()
@@ -42,7 +64,14 @@ def gen_rotated_frames(
     return frames
 
 
-def PIL_frames_to_video(file_path: Path, frames: list[Image.Image], fps: int) -> None:
+def PIL_frames_to_video(file_path: Path, frames: List[Image.Image], fps: int) -> None:
+    """Convert PIL image frames to video file.
+
+    Args:
+        file_path: Output video file path
+        frames: List of image frames
+        fps: Frames per second
+    """
     # ref: https://blog.extramaster.net/2015/07/python-pil-to-mp4.html
     videodim = frames[0].size
     forcc = cv2.VideoWriter_fourcc(*"mp4v")

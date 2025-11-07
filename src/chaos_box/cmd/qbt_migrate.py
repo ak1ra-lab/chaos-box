@@ -1,3 +1,5 @@
+"""Migrate qBittorrent BT_backup directory save paths and categories."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -16,10 +18,20 @@ def qbt_migrate(
     file: Path,
     pattern: str,
     repl: str,
-    auto_managed=-1,
-    private=-1,
-    apply=False,
-):
+    auto_managed: int = -1,
+    private: int = -1,
+    apply: bool = False,
+) -> None:
+    """Migrate paths in qBittorrent fastresume files.
+
+    Args:
+        file: Path to fastresume file
+        pattern: Regex pattern to match in paths
+        repl: Replacement string
+        auto_managed: Filter by auto_managed flag (-1=any, 0=false, 1=true)
+        private: Filter by private flag (-1=any, 0=public, 1=private)
+        apply: Whether to actually modify files
+    """
     try:
         with open(file, "rb") as f:
             fastresume = bdecode(f.read())
@@ -74,7 +86,7 @@ def qbt_migrate(
             logger.error("Failed to write fastresume: %s (%s)", file, e)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--BT_backup",
@@ -115,7 +127,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     args = parse_args()
     BT_backup = Path(args.BT_backup).resolve()
     if not BT_backup.exists():

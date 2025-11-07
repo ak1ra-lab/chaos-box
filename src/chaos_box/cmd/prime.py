@@ -1,3 +1,5 @@
+"""Generate prime numbers in a given range using parallel processing."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -7,7 +9,13 @@ import math
 import argcomplete
 
 
-def print_matrix_formatted(lst, cols):
+def print_matrix_formatted(lst: list[int], cols: int) -> None:
+    """Print numbers in a formatted matrix.
+
+    Args:
+        lst: List of numbers to print
+        cols: Number of columns
+    """
     max_width = len(str(max(lst)))
 
     for i in range(0, len(lst), cols):
@@ -16,7 +24,15 @@ def print_matrix_formatted(lst, cols):
         print(" ".join(formatted_row))
 
 
-def is_prime(n):
+def is_prime(n: int) -> bool:
+    """Check if a number is prime.
+
+    Args:
+        n: Number to check
+
+    Returns:
+        True if number is prime
+    """
     if n < 2:
         return False
     if n == 2:

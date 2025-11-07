@@ -1,3 +1,5 @@
+"""Convert text files to UTF-8 encoding with automatic encoding detection."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -15,7 +17,17 @@ skipped_files = set()
 failed_files = set()
 
 
-def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool, force: bool):
+def convert_to_utf8(
+    input_path: Path, output_path: Path, dry_run: bool, force: bool
+) -> None:
+    """Convert a text file to UTF-8 encoding.
+
+    Args:
+        input_path: Path to input file
+        output_path: Path to write output
+        dry_run: If True, only show what would be done
+        force: If True, overwrite existing files
+    """
     encoding = detect_encoding(input_path)
     if encoding.lower() in ("utf-8", "utf8"):
         skipped_files.add(input_path)
@@ -61,7 +73,12 @@ def convert_to_utf8(input_path: Path, output_path: Path, dry_run: bool, force: b
         logger.error("[FAIL   ] %s (%s): %s", input_path, encoding, err)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        Parsed command line arguments
+    """
     parser = argparse.ArgumentParser(description="convert text files to UTF-8 encoding")
     parser.add_argument(
         "--root",
@@ -100,7 +117,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Main function to process files and convert encodings."""
     args = parse_args()
     root = Path(args.root).expanduser()
     output_dir = Path(args.output_dir).expanduser() if args.output_dir else None

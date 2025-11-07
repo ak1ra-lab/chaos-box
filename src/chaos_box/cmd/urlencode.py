@@ -1,3 +1,5 @@
+"""URL encode or decode text from files or standard input."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -7,7 +9,8 @@ from urllib.parse import quote, unquote
 import argcomplete
 
 
-def main():
+def main() -> None:
+    """Main function to process input text."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-d",

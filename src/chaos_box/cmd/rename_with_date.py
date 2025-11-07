@@ -1,3 +1,5 @@
+"""Rename files to include their last modified date as a prefix."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -17,7 +19,14 @@ DATE_PREFIX_REGEX = re.compile(r"^(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2})-)?")
 
 
 def get_dest_filename(src_path: Path) -> Tuple[Path, bool]:
-    """Generate new filename with last modified date prefix."""
+    """Generate new filename with last modified date prefix.
+
+    Args:
+        src_path: Source file path
+
+    Returns:
+        Tuple of (new path, should rename)
+    """
     mtime = src_path.stat().st_mtime
     date_prefix = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d")
 
@@ -31,7 +40,12 @@ def get_dest_filename(src_path: Path) -> Tuple[Path, bool]:
 
 
 def process_files(files: List[Path], apply: bool = False) -> None:
-    """Process files by either renaming them or logging the changes in dry-run mode."""
+    """Process files by either renaming them or logging the changes.
+
+    Args:
+        files: List of files to process
+        apply: Whether to actually rename files
+    """
     for src in files:
         dest, should_rename = get_dest_filename(src)
         if not should_rename:

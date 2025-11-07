@@ -1,3 +1,5 @@
+"""Merge and deduplicate IP address ranges from input files."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -7,14 +9,33 @@ import argcomplete
 from netaddr import IPNetwork, IPSet
 
 
-def digit_str_zfill(digit_str: str, group):
+def digit_str_zfill(digit_str: str, group: int) -> str:
+    """Add leading zeros to groups of digits.
+
+    Args:
+        digit_str: String of digits to pad
+        group: Size of digit groups
+
+    Returns:
+        Zero-padded digit string
+    """
     zfill = (len(digit_str) + group - 1) // group * group
     return " ".join(
         digit_str.zfill(zfill)[i : i + group] for i in range(0, len(digit_str), group)
     )
 
 
-def digit_to_binary(digit_str: str, base=16, group=4):
+def digit_to_binary(digit_str: str, base: int = 16, group: int = 4) -> str:
+    """Convert digits to binary representation.
+
+    Args:
+        digit_str: String of digits to convert
+        base: Base of input digits
+        group: Size of output binary groups
+
+    Returns:
+        Binary string representation
+    """
     try:
         binary_str = bin(int(digit_str, base)).removeprefix("0b")
         return digit_str_zfill(binary_str, group)
@@ -22,7 +43,15 @@ def digit_to_binary(digit_str: str, base=16, group=4):
         return digit_str
 
 
-def ip_network_to_binary(ip_network: IPNetwork):
+def ip_network_to_binary(ip_network: IPNetwork) -> str:
+    """Convert IP network to binary representation.
+
+    Args:
+        ip_network: IP network to convert
+
+    Returns:
+        Binary string representation
+    """
     sep, base, group = (":", 16, 4) if ip_network.version == 6 else (".", 10, 8)
     binary_addr = sep.join(
         digit_to_binary(digit_str, base, group)
@@ -40,7 +69,15 @@ def ip_network_zfill(ip_network: IPNetwork):
     return f"{zfill_addr}/{ip_network.prefixlen}"
 
 
-def merge_ip_ranges(ip_range_files):
+def merge_ip_ranges(ip_range_files: list[str]) -> tuple[IPSet, IPSet]:
+    """Merge IP ranges from input files.
+
+    Args:
+        ip_range_files: List of files containing IP ranges
+
+    Returns:
+        Tuple of (IPv4Set, IPv6Set) containing merged ranges
+    """
     ipv4_set, ipv6_set = IPSet(), IPSet()
     try:
         # Read from input sources (either files or stdin)

@@ -1,3 +1,10 @@
+"""Generate checksums for all files in a directory.
+
+This module provides functionality to recursively calculate file hashes
+for all files in a directory, supporting multiple hash algorithms and
+parallel processing.
+"""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -5,7 +12,7 @@ import hashlib
 import os
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple
 
 import argcomplete
 from chaos_utils.gitignore import iter_files_with_respect_gitignore
@@ -23,8 +30,16 @@ SUPPORTED_DIGESTS = {
 }
 
 
-def file_digest(file_path: Path, digest: str) -> Tuple[str, Path]:
-    """Calculate the hash of a file."""
+def file_digest(file_path: Path, digest: str) -> Optional[Tuple[str, Path]]:
+    """Calculate the hash digest of a file.
+
+    Args:
+        file_path: Path to the file to hash
+        digest: Name of the hash algorithm to use
+
+    Returns:
+        Tuple of (hash_value, file_path) if successful, None on error
+    """
     try:
         with open(file_path, "rb") as f:
             hasher = SUPPORTED_DIGESTS[digest]()
@@ -44,9 +59,16 @@ def process_directory(
     directory: Path,
     digest: str = DEFAULT_DIGEST,
     respect_gitignore: bool = False,
-    workers: int = None,
+    workers: Optional[int] = None,
 ) -> None:
-    """Process all files in a directory to calculate their hashes."""
+    """Process all files in a directory to calculate their hashes.
+
+    Args:
+        directory: Path to the directory to process
+        digest: Hash algorithm to use
+        respect_gitignore: Whether to respect .gitignore files
+        workers: Number of parallel worker processes
+    """
     files = list(iter_files_with_respect_gitignore(directory, respect_gitignore))
     if not files:
         logger.warning("No files found in directory: %s", directory)
@@ -79,7 +101,12 @@ def process_directory(
         logger.error("Error during processing: %s", err)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        Parsed command line arguments
+    """
     parser = argparse.ArgumentParser(
         description="Calculate file hashes for all files in a directory."
     )
@@ -114,7 +141,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Main function to process directory and generate hash file."""
     args = parse_args()
 
     try:

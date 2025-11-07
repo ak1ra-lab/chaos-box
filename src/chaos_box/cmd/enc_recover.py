@@ -1,13 +1,23 @@
+"""
+Attempt to recover text by trying different character encodings.
+
+ref: [乱码恢复指北 | Re:Linked](https://blog.outv.im/2019/encoding-guide/)
+ref: http://www.mytju.com/classcode/tools/messyCodeRecover.asp
+(gbk       ) "垽偝傟側偔偰傕孨偑偄傞" => (shift-jis ) "愛されなくても君がいる"
+"""
+
 # PYTHON_ARGCOMPLETE_OK
-# ref: [乱码恢复指北 | Re:Linked](https://blog.outv.im/2019/encoding-guide/)
-# ref: http://www.mytju.com/classcode/tools/messyCodeRecover.asp
-# (gbk       ) "垽偝傟側偔偰傕孨偑偄傞" => (shift-jis ) "愛されなくても君がいる"
 
 import argparse
 import fileinput
 
 
-def enc_recover(text):
+def enc_recover(text: str) -> None:
+    """Try to decode text using different encodings.
+
+    Args:
+        text: Text string to attempt recovery on
+    """
     encoding_list = ["utf-8", "iso-8859-1", "gbk", "big5", "shift-jis"]
     align = max(len(_) for _ in encoding_list)
     for current_enc in encoding_list:
@@ -28,7 +38,8 @@ def enc_recover(text):
             )
 
 
-def main():
+def main() -> None:
+    """Main function to process input files or stdin."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "files",

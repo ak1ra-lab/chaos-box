@@ -1,3 +1,5 @@
+"""Convert full-width punctuation to half-width in text files."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -43,6 +45,14 @@ PUNCTUATIONS_NEXT_CHAR_EXCEPTIONS = set(" \n\r\t.,，。：；？！、")
 
 
 def convert_line(line: str) -> str:
+    """Convert punctuation in a line of text.
+
+    Args:
+        line: Input text line
+
+    Returns:
+        Text with converted punctuation
+    """
     new_line = ""
     for i, ch in enumerate(line):
         if ch not in KEYMAPS:
@@ -66,6 +76,12 @@ def convert_line(line: str) -> str:
 
 
 def process_file(filepath: Path, inplace: bool) -> None:
+    """Process a single file.
+
+    Args:
+        filepath: Path to file to process
+        inplace: If True, modify file in place
+    """
     with open(filepath, "r", encoding="utf-8") as f:
         lines = f.readlines()
 

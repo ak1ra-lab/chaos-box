@@ -1,3 +1,5 @@
+"""Convert vol.moe's mobi manga files into various archive formats."""
+
 # PYTHON_ARGCOMPLETE_OK
 # A helper script to convert vol.moe's mobi files to 7zip archives.
 # python3 -m pip install mobi py7zr
@@ -7,6 +9,7 @@ import shutil
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
+from typing import Iterator
 
 import argcomplete
 import mobi
@@ -25,7 +28,19 @@ FORMAT_EXT = {
 }
 
 
-def iter_mobi_files(directory: Path, format: str, force: bool = False):
+def iter_mobi_files(
+    directory: Path, format: str, force: bool = False
+) -> Iterator[Path]:
+    """Iterate over .mobi files in a directory.
+
+    Args:
+        directory: Path to search for .mobi files
+        format: Archive format extension
+        force: If True, process files even if archive exists
+
+    Yields:
+        Paths to .mobi files
+    """
     for mobi_file in directory.rglob("*.mobi"):
         archive = mobi_file.with_suffix(FORMAT_EXT[format])
         if archive.exists() and not force:
@@ -35,6 +50,16 @@ def iter_mobi_files(directory: Path, format: str, force: bool = False):
 
 
 def archive_mobi(file_path: Path, format: str, dry_run: bool = False) -> str:
+    """Extract and archive a single mobi file.
+
+    Args:
+        file_path: Path to .mobi file
+        format: Archive format to use
+        dry_run: If True, only show what would be done
+
+    Returns:
+        Path to created archive file
+    """
     start = time.perf_counter()
     logger.info("Processing %s to %s archive...", file_path, format)
     extract_dir, _ = mobi.extract(str(file_path))
@@ -74,7 +99,16 @@ def archive_mobi(file_path: Path, format: str, dry_run: bool = False) -> str:
 
 def archive_mobi_mp(
     directory: Path, format: str, force: bool, dry_run: bool, workers: int
-):
+) -> None:
+    """Process multiple mobi files in parallel.
+
+    Args:
+        directory: Path containing .mobi files
+        format: Archive format to use
+        force: If True, process files even if archive exists
+        dry_run: If True, only show what would be done
+        workers: Number of parallel worker processes
+    """
     mobi_files = list(iter_mobi_files(directory, format, force))
     if not len(mobi_files) > 0:
         return
