@@ -1,5 +1,10 @@
 # chaos-box
 
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/ak1ra-lab/chaos-box/.github%2Fworkflows%2Fpublish-to-pypi.yaml)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/chaos-box)
+![PyPI - Version](https://img.shields.io/pypi/v/chaos-box)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/ak1ra-lab/chaos-box)
+
 Collection of handy utils written in Python 3
 
 ## install
