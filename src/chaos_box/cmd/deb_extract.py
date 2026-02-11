@@ -16,16 +16,16 @@ logger = setup_logger(__name__)
 
 
 class DebExtractor:
-    """Handle extraction of .deb files in a directory."""
+    """Handle extraction of .deb files."""
 
-    def __init__(self, directory: Path, delete_mode: bool = False) -> None:
+    def __init__(self, files: list[Path], delete_mode: bool = False) -> None:
         """Initialize the DebExtractor.
 
         Args:
-            directory: Path containing .deb files
+            files: List of .deb files to process
             delete_mode: If True, remove extracted directories instead of extracting
         """
-        self.directory = directory
+        self.files = files
         self.delete_mode = delete_mode
 
     def _extract_deb(self, deb_path: Path, extract_dir: Path) -> None:
@@ -83,7 +83,7 @@ class DebExtractor:
         Args:
             deb_path: Path to .deb file
         """
-        extract_dir = self.directory / deb_path.stem
+        extract_dir = deb_path.parent / deb_path.stem
 
         if self.delete_mode:
             self._remove_extracted(extract_dir)
@@ -91,14 +91,16 @@ class DebExtractor:
             self._extract_deb(deb_path, extract_dir)
 
     def run(self) -> None:
-        """Run extraction on all .deb files in the directory."""
-        deb_files = sorted(self.directory.glob("*.deb"))
-        if not deb_files:
-            logger.warning("No .deb files found in '%s'", self.directory.resolve())
+        """Run extraction on provided .deb files."""
+        if not self.files:
+            logger.warning("No .deb files provided")
             return
 
-        logger.info("Found %d .deb file(s) to process", len(deb_files))
-        for deb_file in deb_files:
+        logger.info("Found %d .deb file(s) to process", len(self.files))
+        for deb_file in self.files:
+            if not deb_file.exists():
+                logger.warning("File '%s' not found", deb_file)
+                continue
             self.process_deb(deb_file)
 
 
@@ -107,10 +109,11 @@ def main():
         description="Debian package extractor",
     )
     parser.add_argument(
-        "directory",
-        nargs="?",
-        default=".",
-        help="Directory to process (default: current directory)",
+        "files",
+        nargs="+",
+        type=Path,
+        metavar="FILE",
+        help="Files to process",
     )
     parser.add_argument(
         "-d",
@@ -121,8 +124,7 @@ def main():
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
-    directory = Path(args.directory)
-    extractor = DebExtractor(directory, delete_mode=args.delete)
+    extractor = DebExtractor(args.files, delete_mode=args.delete)
     extractor.run()
 
 
