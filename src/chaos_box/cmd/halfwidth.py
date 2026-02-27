@@ -46,6 +46,12 @@ KEYMAPS = {
 PUNCTUATIONS_NEED_SPACE = set(".:,;!?")
 PUNCTUATIONS_NEXT_CHAR_EXCEPTIONS = set(" \n\r\t.,，。：；？！、")
 
+# Half-width brackets that need surrounding spaces when mid-sentence
+BRACKETS_OPEN = set("([{")
+BRACKETS_CLOSE = set(")]}")
+# Don't add a leading space before an open bracket when preceded by these chars
+BRACKETS_OPEN_PREV_CHAR_EXCEPTIONS = set(" \n\r\t([{")
+
 
 def convert_line(line: str) -> str:
     """Convert punctuation in a line of text.
@@ -65,15 +71,28 @@ def convert_line(line: str) -> str:
         half = KEYMAPS[ch]
         is_line_end = i == len(line.strip()) - 1
         next_char = line[i + 1] if i + 1 < len(line) else ""
+        prev_char = new_line[-1] if new_line else ""
 
+        # Opening bracket mid-sentence: insert a space before it
         if (
+            half in BRACKETS_OPEN
+            and prev_char
+            and prev_char not in BRACKETS_OPEN_PREV_CHAR_EXCEPTIONS
+        ):
+            new_line += " "
+
+        new_line += half
+
+        # Closing bracket: add space after, unless at line end or followed by punctuation/space
+        if half in BRACKETS_CLOSE:
+            if not is_line_end and next_char not in PUNCTUATIONS_NEXT_CHAR_EXCEPTIONS:
+                new_line += " "
+        elif (
             half in PUNCTUATIONS_NEED_SPACE
             and not is_line_end
             and next_char not in PUNCTUATIONS_NEXT_CHAR_EXCEPTIONS
         ):
-            new_line += half + " "
-        else:
-            new_line += half
+            new_line += " "
 
     return new_line
 
