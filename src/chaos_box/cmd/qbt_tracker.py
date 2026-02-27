@@ -1,10 +1,11 @@
+"""Manage qBittorrent tracker URLs via the Web API."""
+
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
 import fnmatch
 import re
 from pathlib import Path
-from typing import List, Optional, Set, Tuple
 
 import argcomplete
 import qbittorrentapi
@@ -16,13 +17,13 @@ logger = setup_logger(__name__)
 
 def filter_torrents(
     client: qbittorrentapi.Client,
-    category: Optional[str] = "",
-    tag: Optional[str] = "",
-    name_glob: Optional[str] = "",
-    name_regex: Optional[re.Pattern | None] = None,
-) -> List[qbittorrentapi.TorrentDictionary]:
+    category: str | None = "",
+    tag: str | None = "",
+    name_glob: str | None = "",
+    name_regex: re.Pattern | None = None,
+) -> list[qbittorrentapi.TorrentDictionary]:
     """Filter torrents based on category, tag and name pattern."""
-    torrents: List[qbittorrentapi.TorrentDictionary] = list(client.torrents_info())
+    torrents: list[qbittorrentapi.TorrentDictionary] = list(client.torrents_info())
 
     if category:
         torrents = [t for t in torrents if t.category == category]
@@ -38,10 +39,10 @@ def filter_torrents(
 
 def get_torrent_tracker_urls(
     torrent: qbittorrentapi.TorrentDictionary,
-    tracker_regex: Optional[re.Pattern | None] = None,
-) -> Set[str]:
+    tracker_regex: re.Pattern | None = None,
+) -> set[str]:
     """Get all unique trackers for a torrent."""
-    tracker_urls: Set[str] = set()
+    tracker_urls: set[str] = set()
     for tracker in torrent.trackers:
         logger.debug("    tracker: %s of type %s", tracker, type(tracker))
         tracker_url = str(tracker.get("url", ""))
@@ -56,10 +57,10 @@ def get_torrent_tracker_urls(
 
 def modify_torrent_tracker(
     torrent: qbittorrentapi.TorrentDictionary,
-    tracker_regex: Optional[re.Pattern | None] = None,
-    tracker_replacement: Optional[str | None] = None,
+    tracker_regex: re.Pattern | None = None,
+    tracker_replacement: str | None = None,
     apply: bool = False,
-) -> List[Tuple[str, str]]:
+) -> list[tuple[str, str]]:
     """
     Modify tracker URLs using regex pattern.
 
@@ -86,7 +87,7 @@ def modify_torrent_tracker(
     return changes
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Modify qBittorrent trackers")
     parser.add_argument(
         "--config",
@@ -117,7 +118,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Parse arguments, connect to qBittorrent, and modify tracker URLs."""
     args = parse_args()
 
     # Load config
@@ -133,7 +135,7 @@ def main():
             config = tomllib.load(f)
         conn_info = config.get("qbittorrent", default_conn_info)
     except FileNotFoundError:
-        logger.error(f"Config file not found: {args.config}")
+        logger.error("Config file not found: %s", args.config)
         return
 
     # Connect and process

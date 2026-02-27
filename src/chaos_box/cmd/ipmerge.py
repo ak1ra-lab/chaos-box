@@ -60,7 +60,7 @@ def ip_network_to_binary(ip_network: IPNetwork) -> str:
     return f"{binary_addr}/{ip_network.prefixlen}"
 
 
-def ip_network_zfill(ip_network: IPNetwork):
+def ip_network_zfill(ip_network: IPNetwork) -> str:
     sep, group = (":", 4) if ip_network.version == 6 else (".", 3)
     zfill_addr = sep.join(
         digit_str_zfill(digit_str, group)
@@ -96,7 +96,7 @@ def merge_ip_ranges(ip_range_files: list[str]) -> tuple[IPSet, IPSet]:
     return ipv4_set, ipv6_set
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="merge IP ranges from files or standard input."
     )
@@ -139,7 +139,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Parse arguments and print merged/deduplicated IP ranges."""
     args = parse_args()
 
     ipv4_set, ipv6_set = merge_ip_ranges(args.files)

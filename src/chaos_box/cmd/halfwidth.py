@@ -7,6 +7,9 @@ import sys
 from pathlib import Path
 
 import argcomplete
+from chaos_utils.logging import setup_logger
+
+logger = setup_logger(__name__)
 
 KEYMAPS = {
     "。": ".",
@@ -95,7 +98,8 @@ def process_file(filepath: Path, inplace: bool) -> None:
             print(line, end="")
 
 
-def main():
+def main() -> None:
+    """Parse arguments and convert full-width punctuation in files."""
     parser = argparse.ArgumentParser(
         description="Convert full-width punctuation to half-width in text files."
     )
@@ -110,7 +114,7 @@ def main():
     for file in args.files:
         filepath = Path(file)
         if not filepath.exists():
-            print(f"File not found: {filepath}", file=sys.stderr)
+            logger.error("File not found: %s", filepath)
             sys.exit(1)
 
         process_file(filepath, args.inplace)

@@ -1,8 +1,11 @@
 """Generate Pascal's Triangle up to specified number of rows."""
 
+# PYTHON_ARGCOMPLETE_OK
+
 import argparse
 from pprint import pprint
 
+import argcomplete
 from chaos_utils.logging import setup_logger
 
 logger = setup_logger(__name__)
@@ -44,11 +47,13 @@ def gen_pascal_triangle(num_rows: int) -> list[list[int]]:
     return pascal_triangle
 
 
-def main():
+def main() -> None:
+    """Parse arguments and print Pascal's Triangle."""
     parser = argparse.ArgumentParser(description="Generate Pascal's Triangle")
     parser.add_argument(
         "num_rows", type=int, help="Number of rows in Pascal's Triangle"
     )
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
     if args.num_rows < 0:

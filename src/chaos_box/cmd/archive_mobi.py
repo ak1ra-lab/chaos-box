@@ -7,9 +7,9 @@
 import argparse
 import shutil
 import time
+from collections.abc import Iterator
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from typing import Iterator
 
 import argcomplete
 import mobi
@@ -28,40 +28,38 @@ FORMAT_EXT = {
 }
 
 
-def iter_mobi_files(
-    directory: Path, format: str, force: bool = False
-) -> Iterator[Path]:
+def iter_mobi_files(directory: Path, fmt: str, force: bool = False) -> Iterator[Path]:
     """Iterate over .mobi files in a directory.
 
     Args:
         directory: Path to search for .mobi files
-        format: Archive format extension
+        fmt: Archive format extension
         force: If True, process files even if archive exists
 
     Yields:
         Paths to .mobi files
     """
     for mobi_file in directory.rglob("*.mobi"):
-        archive = mobi_file.with_suffix(FORMAT_EXT[format])
+        archive = mobi_file.with_suffix(FORMAT_EXT[fmt])
         if archive.exists() and not force:
             logger.warning("%s exist, skip...", archive)
             continue
         yield mobi_file
 
 
-def archive_mobi(file_path: Path, format: str, dry_run: bool = False) -> str:
+def archive_mobi(file_path: Path, fmt: str, dry_run: bool = False) -> str:
     """Extract and archive a single mobi file.
 
     Args:
         file_path: Path to .mobi file
-        format: Archive format to use
+        fmt: Archive format to use
         dry_run: If True, only show what would be done
 
     Returns:
         Path to created archive file
     """
     start = time.perf_counter()
-    logger.info("Processing %s to %s archive...", file_path, format)
+    logger.info("Processing %s to %s archive...", file_path, fmt)
     extract_dir, _ = mobi.extract(str(file_path))
     elapsed = time.perf_counter() - start
     logger.debug("mobi.extract(%s) finished in %0.5f seconds", file_path, elapsed)
@@ -84,7 +82,7 @@ def archive_mobi(file_path: Path, format: str, dry_run: bool = False) -> str:
     # 这样应该没有子目录, 压缩文件保存在源文件同目录
     start = time.perf_counter()
     archive = shutil.make_archive(
-        file_path.stem, format=format, root_dir=root_dir, dry_run=dry_run
+        file_path.stem, format=fmt, root_dir=root_dir, dry_run=dry_run
     )
     elapsed = time.perf_counter() - start
     logger.info("Created archive: %s", archive)
@@ -98,26 +96,26 @@ def archive_mobi(file_path: Path, format: str, dry_run: bool = False) -> str:
 
 
 def archive_mobi_mp(
-    directory: Path, format: str, force: bool, dry_run: bool, workers: int
+    directory: Path, fmt: str, force: bool, dry_run: bool, workers: int
 ) -> None:
     """Process multiple mobi files in parallel.
 
     Args:
         directory: Path containing .mobi files
-        format: Archive format to use
+        fmt: Archive format to use
         force: If True, process files even if archive exists
         dry_run: If True, only show what would be done
         workers: Number of parallel worker processes
     """
-    mobi_files = list(iter_mobi_files(directory, format, force))
-    if not len(mobi_files) > 0:
+    mobi_files = list(iter_mobi_files(directory, fmt, force))
+    if not mobi_files:
         return
     logger.info("Found %d mobi files in %s", len(mobi_files), directory)
 
     start = time.perf_counter()
     with ProcessPoolExecutor(max_workers=workers) as executor:
         futures = {
-            executor.submit(archive_mobi, f, format, dry_run): f for f in mobi_files
+            executor.submit(archive_mobi, f, fmt, dry_run): f for f in mobi_files
         }
         for future in as_completed(futures):
             try:
@@ -129,7 +127,12 @@ def archive_mobi_mp(
     logger.debug("Program finished in %0.5f seconds", elapsed)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        Parsed command line arguments
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -169,7 +172,8 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Register optional archive formats and archive all mobi files in a directory."""
     try:
         # Register 7z format if py7zr is installed
         from py7zr import pack_7zarchive, unpack_7zarchive

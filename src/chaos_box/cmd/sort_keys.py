@@ -4,13 +4,12 @@
 
 import argparse
 import json
-from typing import List
 
 import argcomplete
 from chaos_utils.text_utils import save_json
 
 
-def sort_keys(filenames: List[str]) -> None:
+def sort_keys(filenames: list[str]) -> None:
     """Sort keys in JSON files and save them back.
 
     Args:

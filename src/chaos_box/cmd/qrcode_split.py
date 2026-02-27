@@ -10,9 +10,9 @@ import argparse
 import base64
 import math
 import sys
+from collections.abc import Iterator
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from typing import Iterator, List, Tuple
 
 import argcomplete
 import qrcode
@@ -24,7 +24,7 @@ logger = setup_logger(__name__)
 
 def iter_file_into_chunks(
     file_path: Path, chunk_size: int
-) -> Iterator[Tuple[bytes, int]]:
+) -> Iterator[tuple[bytes, int]]:
     """Read a file in chunks and yield each chunk with its index.
 
     Args:
@@ -89,7 +89,7 @@ def generate_qr_code(
     logger.info("Saved QR code %s to %s", index, img_path)
 
 
-def get_existing_indices(output_dir: Path, prefix: str) -> List[int]:
+def get_existing_indices(output_dir: Path, prefix: str) -> list[int]:
     """Get list of existing QR code indices in the output directory.
 
     Args:
@@ -190,7 +190,7 @@ def main() -> None:
     else:
         existing_indices = []
 
-    last_index = existing_indices[-1] if len(existing_indices) > 0 else 0
+    last_index = existing_indices[-1] if existing_indices else 0
 
     count = 0
     futures = []

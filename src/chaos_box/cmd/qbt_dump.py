@@ -5,7 +5,6 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Dict, List, Union
 
 import argcomplete
 from chaos_utils.logging import setup_logger
@@ -15,8 +14,8 @@ logger = setup_logger(__name__)
 
 
 def decode_torrent_data_files(
-    torrent_data: Dict[bytes, Union[bytes, Dict, List]],
-) -> List[Dict[str, Union[int, str]]]:
+    torrent_data: dict[bytes, bytes | dict | list],
+) -> list[dict[str, int | str]]:
     """Decode file information from torrent data.
 
     Args:
@@ -46,7 +45,7 @@ def decode_torrent_data_files(
         ]
 
 
-def bytes_to_str(obj: Union[Dict, List, bytes]) -> Union[Dict, List, str]:
+def bytes_to_str(obj: dict | list | bytes) -> dict | list | str:
     """Convert bytes objects to strings recursively.
 
     Args:
@@ -68,7 +67,13 @@ def bytes_to_str(obj: Union[Dict, List, bytes]) -> Union[Dict, List, str]:
         return obj
 
 
-def torrent_dump(torrent_data: dict, file_path: Path):
+def torrent_dump(torrent_data: dict, file_path: Path) -> None:
+    """Log torrent metadata as formatted JSON.
+
+    Args:
+        torrent_data: Decoded torrent bencoded data
+        file_path: Original torrent file path (used for the output name)
+    """
     info = torrent_data.get(b"info", {})
     info.pop(b"pieces", None)
     files = decode_torrent_data_files(torrent_data)
@@ -82,7 +87,13 @@ def torrent_dump(torrent_data: dict, file_path: Path):
     logger.info("\n%s", json.dumps(output, indent=2, ensure_ascii=False))
 
 
-def fastresume_dump(fastresume_data: dict, file_path: Path):
+def fastresume_dump(fastresume_data: dict, file_path: Path) -> None:
+    """Log fastresume metadata as formatted JSON.
+
+    Args:
+        fastresume_data: Decoded fastresume bencoded data
+        file_path: Original fastresume file path (used for the output name)
+    """
     fastresume_data.pop(b"peers", None)
     fastresume_data.pop(b"pieces", None)
     output = {
@@ -124,7 +135,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Parse arguments and dump torrent/fastresume file contents."""
     args = parse_args()
     for torrent in args.torrents:
         qbt_dump(Path(torrent))

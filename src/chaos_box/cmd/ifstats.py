@@ -9,19 +9,19 @@ import argcomplete
 import psutil
 
 
-def convert_bytes(bytes: int) -> str:
+def convert_bytes(num_bytes: int) -> str:
     """Convert bytes to human readable format.
 
     Args:
-        bytes: Number of bytes
+        num_bytes: Number of bytes
 
     Returns:
         Formatted string with units
     """
-    if bytes >= 2**40:
-        return f"{bytes / 2**40:7.2f} TiB"
+    if num_bytes >= 2**40:
+        return f"{num_bytes / 2**40:7.2f} TiB"
     else:
-        return f"{bytes / 2**30:7.2f} GiB"
+        return f"{num_bytes / 2**30:7.2f} GiB"
 
 
 def format_packets(packets: int) -> str:
@@ -60,7 +60,8 @@ def get_net_stats(pattern: re.Pattern) -> None:
             )
 
 
-def main():
+def main() -> None:
+    """Parse arguments and display network interface statistics."""
     parser = argparse.ArgumentParser(
         description="Display network interface statistics."
     )

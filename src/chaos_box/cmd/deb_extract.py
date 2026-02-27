@@ -63,13 +63,13 @@ class DebExtractor:
             elif member.name.startswith("data.tar"):
                 self._extract_ar_member(member, extract_dir / "data")
 
-    def _extract_ar_member(self, member: arfile.ArMember, extract_dir: Path):
+    def _extract_ar_member(self, member: arfile.ArMember, extract_dir: Path) -> None:
         extract_dir.mkdir(parents=True, exist_ok=True)
         with TarFileZstd.open(fileobj=member) as tar:
             tar.extractall(path=extract_dir)
         logger.debug("Extracted '%s' to '%s'", member.name, extract_dir)
 
-    def _remove_extracted(self, extract_dir: Path):
+    def _remove_extracted(self, extract_dir: Path) -> None:
         if extract_dir.exists() and extract_dir.is_dir():
             try:
                 shutil.rmtree(extract_dir)
@@ -104,7 +104,8 @@ class DebExtractor:
             self.process_deb(deb_file)
 
 
-def main():
+def main() -> None:
+    """Parse arguments and run the .deb extractor."""
     parser = argparse.ArgumentParser(
         description="Debian package extractor",
     )

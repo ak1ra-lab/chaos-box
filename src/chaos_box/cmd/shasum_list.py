@@ -12,7 +12,6 @@ import hashlib
 import os
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
-from typing import Optional, Tuple
 
 import argcomplete
 from chaos_utils.gitignore import iter_files_with_respect_gitignore
@@ -30,7 +29,7 @@ SUPPORTED_DIGESTS = {
 }
 
 
-def file_digest(file_path: Path, digest: str) -> Optional[Tuple[str, Path]]:
+def file_digest(file_path: Path, digest: str) -> tuple[str, Path] | None:
     """Calculate the hash digest of a file.
 
     Args:
@@ -59,7 +58,7 @@ def process_directory(
     directory: Path,
     digest: str = DEFAULT_DIGEST,
     respect_gitignore: bool = False,
-    workers: Optional[int] = None,
+    workers: int | None = None,
 ) -> None:
     """Process all files in a directory to calculate their hashes.
 
@@ -138,7 +137,7 @@ def parse_args() -> argparse.Namespace:
     )
     argcomplete.autocomplete(parser)
 
-    return parser.parse_args()
+    return parser.parse_args()  # type: ignore[return-value]
 
 
 def main() -> None:

@@ -12,12 +12,13 @@ from chaos_utils.text_utils import detect_encoding
 logger = setup_logger(__name__)
 
 
-skipped_files = set()
-failed_files = set()
-
-
 def convert_to_utf8(
-    input_path: Path, output_path: Path, apply: bool = False, force: bool = False
+    input_path: Path,
+    output_path: Path,
+    apply: bool = False,
+    force: bool = False,
+    skipped_files: set[Path] | None = None,
+    failed_files: set[Path] | None = None,
 ) -> None:
     """Convert a text file to UTF-8 encoding.
 
@@ -29,7 +30,8 @@ def convert_to_utf8(
     """
     encoding = detect_encoding(input_path)
     if encoding.lower() in ("utf-8", "utf8"):
-        skipped_files.add(input_path)
+        if skipped_files is not None:
+            skipped_files.add(input_path)
         logger.info("[SKIP   ] %s is already UTF-8 encoded", input_path)
         return
 
@@ -68,7 +70,8 @@ def convert_to_utf8(
             "[OK     ] %s (%s)\n          → %s", input_path, encoding, output_path
         )
     except Exception as err:
-        failed_files.add(input_path)
+        if failed_files is not None:
+            failed_files.add(input_path)
         logger.error("[FAIL   ] %s (%s): %s", input_path, encoding, err)
 
 
@@ -107,13 +110,16 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    """Main function to process files and convert encodings."""
+    """Parse arguments and convert files to UTF-8 encoding."""
     args = parse_args()
     output_dir = Path(args.output).expanduser() if args.output else None
 
     logger.info("Found %d files to process", len(args.files))
     if not args.apply:
         logger.info("Running in dry-run mode - no changes will be made")
+
+    skipped_files: set[Path] = set()
+    failed_files: set[Path] = set()
 
     for file in args.files:
         input_path = Path(file).expanduser()
@@ -125,7 +131,9 @@ def main() -> None:
         if output_dir:
             output_path = output_dir / input_path.name
 
-        convert_to_utf8(input_path, output_path, args.apply, args.force)
+        convert_to_utf8(
+            input_path, output_path, args.apply, args.force, skipped_files, failed_files
+        )
 
     if skipped_files:
         logger.info(

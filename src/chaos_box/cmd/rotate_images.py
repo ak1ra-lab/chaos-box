@@ -4,7 +4,6 @@
 
 import argparse
 from pathlib import Path
-from typing import List
 
 import argcomplete
 import cv2
@@ -38,7 +37,7 @@ def gen_circle_mask(im: Image.Image, upscale: int = 3) -> Image.Image:
 
 def gen_rotated_frames(
     im: Image.Image, step: int = 45, trim: bool = False
-) -> List[Image.Image]:
+) -> list[Image.Image]:
     """Generate frames of rotated images.
 
     Args:
@@ -64,7 +63,7 @@ def gen_rotated_frames(
     return frames
 
 
-def PIL_frames_to_video(file_path: Path, frames: List[Image.Image], fps: int) -> None:
+def PIL_frames_to_video(file_path: Path, frames: list[Image.Image], fps: int) -> None:
     """Convert PIL image frames to video file.
 
     Args:

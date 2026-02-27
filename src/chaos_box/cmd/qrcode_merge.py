@@ -10,7 +10,6 @@ import argparse
 import base64
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from typing import Optional, Tuple
 
 import argcomplete
 from chaos_utils.logging import setup_logger
@@ -20,7 +19,7 @@ from pyzbar.pyzbar import decode
 logger = setup_logger(__name__)
 
 
-def decode_qr_code(file_path: Path) -> Optional[Tuple[int, str]]:
+def decode_qr_code(file_path: Path) -> tuple[int, str] | None:
     """Decode a QR code image file and extract its data.
 
     Args:
@@ -88,7 +87,7 @@ def main() -> None:
             logger.warning("Skip file with unexpected name: %s", f)
             continue
 
-    if not len(qr_files) > 0:
+    if not qr_files:
         logger.error("No valid QR code images found in %s", directory)
         return
 
@@ -102,7 +101,7 @@ def main() -> None:
             if result is not None:
                 decoded_chunks.append(result)
 
-    if not len(decoded_chunks) > 0:
+    if not decoded_chunks:
         logger.error("No QR code could be decoded successfully.")
         return
 

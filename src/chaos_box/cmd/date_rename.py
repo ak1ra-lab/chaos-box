@@ -6,7 +6,6 @@ import argparse
 import re
 from datetime import datetime
 from pathlib import Path
-from typing import List, Tuple
 
 import argcomplete
 from chaos_utils.logging import setup_logger
@@ -17,7 +16,7 @@ logger = setup_logger(__name__)
 DATE_PREFIX_REGEX = re.compile(r"^(([0-9]{4}-[0-9]{2}-[0-9]{2}|[0-9]{2})-)?")
 
 
-def get_dest_filename(src_path: Path) -> Tuple[Path, bool]:
+def get_dest_filename(src_path: Path) -> tuple[Path, bool]:
     """Generate new filename with last modified date prefix.
 
     Args:
@@ -38,7 +37,7 @@ def get_dest_filename(src_path: Path) -> Tuple[Path, bool]:
     return dest_path, (dest_path != src_path)
 
 
-def process_files(files: List[Path], apply: bool = False) -> None:
+def process_files(files: list[Path], apply: bool = False) -> None:
     """Process files by either renaming them or logging the changes.
 
     Args:

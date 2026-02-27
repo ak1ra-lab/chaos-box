@@ -47,7 +47,8 @@ def is_prime(n: int) -> bool:
     return True
 
 
-def main():
+def main() -> None:
+    """Parse arguments and print prime numbers in the specified range."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "end",
@@ -74,16 +75,16 @@ def main():
     argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
-    PRIMES = []
-    NUMBERS = range(args.start, args.end + 1)
+    primes = []
+    numbers = range(args.start, args.end + 1)
     with concurrent.futures.ProcessPoolExecutor(
         max_workers=args.max_workers
     ) as executor:
-        for num, ret in zip(NUMBERS, executor.map(is_prime, NUMBERS)):
+        for num, ret in zip(numbers, executor.map(is_prime, numbers)):
             if ret:
-                PRIMES.append(num)
+                primes.append(num)
 
-    print_matrix_formatted(PRIMES, 10)
+    print_matrix_formatted(primes, 10)
 
 
 if __name__ == "__main__":

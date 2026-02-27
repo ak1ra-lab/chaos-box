@@ -11,6 +11,8 @@ ref: http://www.mytju.com/classcode/tools/messyCodeRecover.asp
 import argparse
 import fileinput
 
+import argcomplete
+
 
 def enc_recover(text: str) -> None:
     """Try to decode text using different encodings.
@@ -47,6 +49,7 @@ def main() -> None:
         metavar="FILE",
         help="messy encoded files to read, if empty, stdin is used",
     )
+    argcomplete.autocomplete(parser)
     args = parser.parse_args()
 
     try:

@@ -77,7 +77,7 @@ def main() -> None:
     repo_stats = sorted_repo_stats(get_repo_stats(), sort_by=args.sort_by)
 
     for repo, packages in repo_stats:
-        logger.info(f"{len(packages):5d} | {repo}")
+        logger.info("%5d | %s", len(packages), repo)
 
 
 if __name__ == "__main__":

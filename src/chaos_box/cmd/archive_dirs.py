@@ -13,27 +13,27 @@ from chaos_utils.logging import setup_logger
 logger = setup_logger(__name__)
 
 
-def archive_dir(dir_path: Path, format: str, dry_run: bool = False) -> None:
+def archive_dir(dir_path: Path, fmt: str, dry_run: bool = False) -> None:
     """Create an archive file from a directory.
 
     Args:
         dir_path: Path to the directory to archive
-        format: Archive format to use (e.g. zip, tar, 7z)
+        fmt: Archive format to use (e.g. zip, tar, 7z)
         dry_run: If True, only show what would be done
     """
     archive_base = dir_path.parent / dir_path.name
     shutil.make_archive(
-        base_name=str(archive_base), format=format, base_dir=dir_path, dry_run=dry_run
+        base_name=str(archive_base), format=fmt, base_dir=dir_path, dry_run=dry_run
     )
-    logger.info("Archive directory '%s' into '%s' format", dir_path, format)
+    logger.info("Archive directory '%s' into '%s' format", dir_path, fmt)
 
 
-def archive_dirs_mp(directory: Path, format: str, dry_run: bool, workers: int) -> None:
+def archive_dirs_mp(directory: Path, fmt: str, dry_run: bool, workers: int) -> None:
     """Archive all directories in parallel using multiple processes.
 
     Args:
         directory: Path containing directories to archive
-        format: Archive format to use
+        fmt: Archive format to use
         dry_run: If True, only show what would be done
         workers: Number of parallel worker processes
     """
@@ -42,7 +42,7 @@ def archive_dirs_mp(directory: Path, format: str, dry_run: bool, workers: int) -
 
     with ProcessPoolExecutor(max_workers=workers) as executor:
         # list comprehension to create a mapping of futures to dir_path
-        futures = {executor.submit(archive_dir, d, format, dry_run): d for d in dirs}
+        futures = {executor.submit(archive_dir, d, fmt, dry_run): d for d in dirs}
         for future in as_completed(futures):
             dir_path = futures[future]
             try:
@@ -91,7 +91,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
+    """Register optional archive formats and archive all subdirectories."""
     try:
         # Register 7z format if py7zr is installed
         # pip3 install -U py7zr || apt install python3-py7zr
