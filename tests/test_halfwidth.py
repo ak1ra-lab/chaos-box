@@ -54,10 +54,10 @@ from chaos_box.cmd.halfwidth import convert_line, process_file
         ("（你好），下一句", "(你好), 下一句"),
         ("（你好）。下一句", "(你好). 下一句"),
         # Symbols → no space needed
-        ("——", "__"),
-        ("…", "^"),
-        ("￥100", "$100"),
-        ("¥100", "$100"),
+        ("——", "----"),
+        ("…", "..."),
+        ("￥100", "￥100"),
+        ("¥100", "¥100"),
         # Mixed ASCII and full-width
         ("price：100", "price: 100"),
         # Newline at end — is_line_end strips trailing whitespace
