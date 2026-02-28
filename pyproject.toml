@@ -5,7 +5,7 @@ description = "Collection of handy utils written in Python 3"
 authors = [{ name = "ak1ra", email = "git@ak1ra.xyz" }]
 dependencies = [
     "argcomplete>=3.6.2",
-    "chaos-utils>=0.1.0",
+    "chaos-utils>=0.4.0",
     "fastbencode>=0.3.2",
     "httpx>=0.28.1",
     "mobi>=0.3.3",
