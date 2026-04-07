@@ -14,11 +14,16 @@ Collection of handy utils written in Python 3
 ```shell
 # install from PyPI
 uv tool install chaos-box
+# or with full dependencies, for src/chaos_box/cmd/rotate_images.py
+uv tool install chaos-box[full]
 
 # install from Test PyPI
 uv tool install chaos-box \
     --index https://test.pypi.org/simple \
     --default-index https://pypi.org/simple
+
+# install from GitHub
+uv tool install git+https://github.com/ak1ra-lab/chaos-box.git@dev
 ```
 
 ## tools

@@ -5,13 +5,11 @@ description = "Collection of handy utils written in Python 3"
 authors = [{ name = "ak1ra", email = "git@ak1ra.xyz" }]
 dependencies = [
     "argcomplete>=3.6.2",
-    "chaos-utils>=0.4.0",
+    "chaos-utils>=0.4.1",
     "fastbencode>=0.3.2",
     "httpx>=0.28.1",
     "mobi>=0.3.3",
     "netaddr>=1.3.0",
-    "numpy>=2.3.0",
-    "opencv-python-headless>=4.11.0.86",
     "Pillow>=11.2.1",
     "psutil>=7.0.0",
     "py7zr>=1.0.0",
@@ -39,31 +37,18 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-keywords = [
-    "archive",
-    "bittorrent",
-    "checksum",
-    "cli",
-    "commandline",
-    "compression",
-    "debian",
-    "file-renaming",
-    "image-rotation",
-    "ip-address",
-    "json",
-    "network",
-    "qbittorrent",
-    "qrcode",
-    "system-tools",
-    "text-processing",
-    "url-encoding",
-    "utility",
-]
+keywords = []
 readme = { file = "README.md", content-type = "text/markdown" }
 
 # A previous PEP had specified license to be a table with a file or a text key, this format is now deprecated.
 # https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license-and-license-files
 license = "MIT"
+
+[project.optional-dependencies]
+full = [
+    "numpy>=2.3.0",
+    "opencv-python-headless>=4.11.0.86",
+]
 
 [project.urls]
 Homepage = "https://github.com/ak1ra-lab/chaos-box"
